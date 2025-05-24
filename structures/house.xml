@@ -1,0 +1,29 @@
+<Structure>
+    <Goal>
+        <Block color="brown" pos="(0, 0, 0)"/>
+        <Block color="brown" pos="(1, 0, 0)"/>
+        <Block color="brown" pos="(2, 0, 0)"/>
+        <Block color="brown" pos="(0, 1, 0)"/>
+        <Block color="brown" pos="(2, 1, 0)"/>
+        <Block color="brown" pos="(0, 2, 0)"/>
+        <Block color="brown" pos="(1, 2, 0)"/>
+        <Block color="brown" pos="(2, 2, 0)"/>
+    </Goal>
+    <Goal>
+        <Block color="gray" pos="(0, 0, 1)"/>
+        <Block color="gray" pos="(2, 0, 1)"/>
+        <Block color="gray" pos="(0, 2, 1)"/>
+        <Block color="gray" pos="(2, 2, 1)"/>
+    </Goal>
+    <Goal>
+        <Block color="red" pos="(0, 0, 2)"/>
+        <Block color="red" pos="(1, 0, 2)"/>
+        <Block color="red" pos="(2, 0, 2)"/>
+        <Block color="red" pos="(0, 1, 2)"/>
+        <Block color="red" pos="(1, 1, 2)"/>
+        <Block color="red" pos="(2, 1, 2)"/>
+        <Block color="red" pos="(0, 2, 2)"/>
+        <Block color="red" pos="(1, 2, 2)"/>
+        <Block color="red" pos="(2, 2, 2)"/>
+    </Goal>
+</Structure>

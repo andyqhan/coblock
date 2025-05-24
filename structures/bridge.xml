@@ -1,0 +1,18 @@
+<Structure>
+    <Goal>
+        <Block color="stone" pos="(0, 0, 0)"/>
+        <Block color="stone" pos="(0, 0, 1)"/>
+        <Block color="stone" pos="(0, 0, 2)"/>
+    </Goal>
+    <Goal>
+        <Block color="wood" pos="(1, 0, 2)"/>
+        <Block color="wood" pos="(2, 0, 2)"/>
+        <Block color="wood" pos="(3, 0, 2)"/>
+        <Block color="wood" pos="(4, 0, 2)"/>
+    </Goal>
+    <Goal>
+        <Block color="stone" pos="(5, 0, 0)"/>
+        <Block color="stone" pos="(5, 0, 1)"/>
+        <Block color="stone" pos="(5, 0, 2)"/>
+    </Goal>
+</Structure>

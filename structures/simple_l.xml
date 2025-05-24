@@ -1,0 +1,10 @@
+<Structure>
+    <Goal>
+        <Block color="yellow" pos="(0, 0, 0)"/>
+        <Block color="yellow" pos="(0, 1, 0)"/>
+    </Goal>
+    <Goal>
+        <Block color="blue" pos="(0, 0, 1)"/>
+        <Block color="blue" pos="(0, 0, 2)"/>
+    </Goal>
+</Structure>
