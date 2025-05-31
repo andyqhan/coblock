@@ -1,1 +1,5 @@
 plan.md
+.env
+comparison_results/
+*.log
+__pycache__/
