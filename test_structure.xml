@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Structure>
+    <Goal>
+        <Block color="yellow" pos="(0, 0, 0)"/>
+        <Block color="yellow" pos="(0, 1, 0)"/>
+        <Block color="yellow" pos="(1, 0, 0)"/>
+    </Goal>
+    <Goal>
+        <Block color="blue" pos="(0, 0, 1)"/>
+        <Block color="blue" pos="(0, 0, 2)"/>
+    </Goal>
+    <Goal>
+        <Block color="red" pos="(2, 0, 0)"/>
+        <Block color="red" pos="(2, 1, 0)"/>
+    </Goal>
+</Structure>

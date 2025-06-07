@@ -26,23 +26,23 @@ from llm_coordinator import LLMCoordinator
 # Model configurations
 MODEL_CONFIGS = {
     "sonnet-4": {
-        "name": "Sonnet 4",
-        "model": "claude-3-5-sonnet-20241022",
+        "name": "sonnet-4",
+        "model": "claude-sonnet-4-20250514",
         "provider": "anthropic"
     },
     # "sonnet-3.7": {
-    #     "name": "Sonnet 3.7",
-    #     "model": "claude-3-5-sonnet-20240620",
+    #     "name": "sonnet-3.7",
+    #     "model": "claude-3-7-sonnet-20250219",
     #     "provider": "anthropic"
     # },
     # "sonnet-3.5": {
-    #     "name": "Sonnet 3.5",
-    #     "model": "claude-3-sonnet-20240229",
+    #     "name": "sonnet-3.5",
+    #     "model": "claude-3-5-sonnet-20241022",
     #     "provider": "anthropic"
     # },
     "haiku-3.5": {
-        "name": "Haiku 3.5",
-        "model": "claude-3-haiku-20240307",
+        "name": "haiku-3.5",
+        "model": "claude-3-5-haiku-20241022",
         "provider": "anthropic"
     }
 }
@@ -62,7 +62,8 @@ class TrialResult:
     agent1_actions: int
     agent2_actions: int
     chat_messages_sent: int
-    
+    final_game_state: Optional[str] = None
+
     @property
     def success_rate(self) -> float:
         if self.total_actions == 0:
@@ -245,7 +246,12 @@ class ModelComparisonOrchestrator:
             turns_taken = coordinator.turn
             total_actions = coordinator.total_actions
             failed_actions = coordinator.failed_actions_count
-            
+
+            # Get final game state if failed
+            final_state = None
+            if not success:
+                final_state = str(coordinator.env.get_current_state())
+
             # Count actions per agent
             agent1_actions = len([a for a in coordinator.world_actions if a.agent == "agent1"])
             agent2_actions = len([a for a in coordinator.world_actions if a.agent == "agent2"])
@@ -267,7 +273,8 @@ class ModelComparisonOrchestrator:
                 time_taken=time_taken,
                 agent1_actions=agent1_actions,
                 agent2_actions=agent2_actions,
-                chat_messages_sent=chat_messages
+                chat_messages_sent=chat_messages,
+                final_game_state=final_state,
             )
             
             self.main_logger.info(f"Trial completed: {'SUCCESS' if success else 'FAILURE'} in {turns_taken} turns")
@@ -294,7 +301,8 @@ class ModelComparisonOrchestrator:
                 time_taken=time.time() - start_time,
                 agent1_actions=0,
                 agent2_actions=0,
-                chat_messages_sent=0
+                chat_messages_sent=0,
+                final_game_state=None,
             )
     
     def run_all_comparisons(self):
@@ -304,7 +312,7 @@ class ModelComparisonOrchestrator:
         
         self.main_logger.info(f"\nStarting comparisons:")
         self.main_logger.info(f"- Models: {[MODEL_CONFIGS[m]['name'] for m in self.models]}")
-        self.main_logger.info(f"- Pairings: {len(pairings)}")
+        self.main_logger.info(f"- Pairings: {pairings} ({len(pairings)})")
         self.main_logger.info(f"- Structures: {len(self.structures)}")
         self.main_logger.info(f"- Trials per pairing: {self.trials_per_pairing}")
         self.main_logger.info(f"- Total runs: {total_runs}")
@@ -658,7 +666,7 @@ def main():
     parser = argparse.ArgumentParser(description='Run model comparison benchmarks')
     parser.add_argument('--structures', nargs='+', help='Paths to structure XML files')
     parser.add_argument('--trials', type=int, default=3, help='Number of trials per pairing')
-    parser.add_argument('--max-turns', type=int, default=100, help='Maximum turns per game')
+    parser.add_argument('--max-turns', type=int, default=40, help='Maximum turns per game')
     parser.add_argument('--output-dir', default='comparison_results', help='Output directory')
     parser.add_argument('--create-test-structures', action='store_true', 
                        help='Create test structures and exit')

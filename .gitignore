@@ -1,5 +1,5 @@
 plan.md
 .env
-comparison_results/
+comparison_results*
 *.log
 __pycache__/

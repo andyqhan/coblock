@@ -1,9 +1,0 @@
-<Structure>
-    <Goal>
-        <Block color="red" pos="(0, 0, 0)"/>
-        <Block color="red" pos="(0, 0, 1)"/>
-        <Block color="red" pos="(0, 0, 2)"/>
-        <Block color="red" pos="(0, 0, 3)"/>
-        <Block color="red" pos="(0, 0, 4)"/>
-    </Goal>
-</Structure>

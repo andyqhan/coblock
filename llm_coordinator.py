@@ -332,21 +332,33 @@ At each turn, you will receive information about your inventory in this format:
     <Block color="yellow" count=1/>
 </Inventory>
 
-# Message format
-At each turn, you will get your message history with every other agent, if you have one, in this format (in this example, assume you are "agent1"):
-<Dialogue>
-    <Message sender="agent1" to="agent2" message="Hello!"/>
-    <Message sender="agent2" to="agent1" message="Nice to meet you!"/>
-</Dialogue>
-<Dialogue>
-    <Message sender="agent1" to="agent3" message="My name is agent1, how about you?"/>
-    <Message sender="agent3" to="agent1" message="I'm agent3!"/>
-</Dialogue>
-
 # Your individual task
 """
+
+# # Message format
+# At each turn, you will get your message history with every other agent, if you have one, in this format (in this example, assume you are "agent1"):
+# <Dialogue>
+#     <Message sender="agent1" to="agent2" message="Hello!"/>
+#     <Message sender="agent2" to="agent1" message="Nice to meet you!"/>
+# </Dialogue>
+# <Dialogue>
+#     <Message sender="agent1" to="agent3" message="My name is agent1, how about you?"/>
+#     <Message sender="agent3" to="agent1" message="I'm agent3!"/>
+# </Dialogue>
+
         prompt += agent.get_goals_xml()
-        prompt += f"\n\nYou are {agent.name}. Only place blocks from your inventory. Always send an action command (place_block, remove_block, or wait). Your partner does not know what your goal is, nor do they know what blocks you have."
+        additional_instructions = """\n\nKeep in mind the following rules:
+- You can only place blocks from *your* inventory.
+- You must always send an action command (`place_block`, `remove_block`, or `wait`) on every turn. You may optionally send a `send_chat` command, which is the *only* way to communicate with your partner.
+- Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals.
+- Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (z=0) or another block (which is eventually connected to the ground).
+- You may only destroy blocks that you have placed. If you need to destroy a block someone else placed, ask them with `send_chat`.
+- Block placements will *fail* if they do not adhere to gravity or another block is already in that location.
+- The z-axis is the vertical axis. z is the last number in the three-tuple positions.
+- Success is when you have all and only the blocks for the goal.
+"""
+        prompt += additional_instructions
+        prompt += f"\n\nYou are {agent.name}."
         return prompt
     
     def _get_world_state_xml(self) -> str:
@@ -413,17 +425,17 @@ At each turn, you will get your message history with every other agent, if you h
             self.pending_messages[agent.name] = []
         
         # Add dialogue history
-        other_agents = [a for a in self.agent_order if a != agent.name]
-        dialogues = agent.get_dialogues_xml(other_agents)
-        if dialogues:
-            parts.append("\nMessage history:")
-            parts.append(dialogues)
-        
-        # Add recent actions
-        recent_actions = self._get_recent_actions_text(agent.name)
-        if recent_actions:
-            parts.append("\n" + recent_actions)
-        
+        # other_agents = [a for a in self.agent_order if a != agent.name]
+        # dialogues = agent.get_dialogues_xml(other_agents)
+        # if dialogues:
+        #     parts.append("\nMessage history:")
+        #     parts.append(dialogues)
+
+        # # Add recent actions
+        # recent_actions = self._get_recent_actions_text(agent.name)
+        # if recent_actions:
+        #     parts.append("\n" + recent_actions)
+
         # Add any failed actions from last turn
         if agent.failed_actions:
             parts.append("\nYour previous action failed:")
@@ -578,6 +590,7 @@ At each turn, you will get your message history with every other agent, if you h
     
     def play_turn(self):
         """Execute one turn of the game."""
+        time.sleep(1)  # hopefully this makes Anthropic's rate limiter happy
         agent = self.get_current_agent()
         logger.info(f"\n=== Turn {self.turn + 1}: {agent.name}'s turn ===")
         
