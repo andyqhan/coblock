@@ -32,6 +32,7 @@ class Agent:
     messages: List[Dict[str, str]] = field(default_factory=list)
     chat_messages: Dict[str, List[Dict[str, str]]] = field(default_factory=lambda: defaultdict(list))
     failed_actions: List[Dict[str, Any]] = field(default_factory=list)
+    voted_end_game: bool = False
     
     def add_to_inventory(self, color: str, count: int = 1):
         """Add blocks to agent's inventory."""
@@ -236,6 +237,7 @@ class LLMCoordinator:
         self.turn = 0
         self.world_actions: List[WorldAction] = []
         self.pending_messages: Dict[str, List[Dict[str, str]]] = defaultdict(list)
+        self.consecutive_end_votes = 0
         
         # Statistics
         self.total_actions = 0
@@ -308,21 +310,23 @@ class LLMCoordinator:
     def _construct_initial_prompt(self, agent: Agent) -> str:
         """Construct the initial task introduction prompt."""
         prompt = """# Task Summary
-I want you to act as a Minecraft player collaborating with another agent to build a structure with a blueprint. You need to use the following commands to interact with the Minecraft world:
+You will act as a Minecraft player collaborating with another agent to build a structure with a blueprint. You need to use the following commands to interact with the Minecraft world:
 ## Place a red block at the position of (x: 1, y: 1, z: 0).
 place_block(block_type=red, pos=(1,1,0))
 ## Chat with a partner
 send_chat(to="agent2", message="Hello, partner")
-## Destroy the block at the position of (3, 1, 3). You will receive the block back in your inventory.
-remove_block(pos=(3, 1, 3))
+## Destroy the block at the position of (3,1,3). You will receive the block back in your inventory.
+remove_block(pos=(3,1,3))
 ## Wait for your turn
 wait()
+## Vote to end the game (use when you think you're done with the game)
+end_game()
 
 # World state format
 At each turn, you will receive information about the world state in this format:
 <World>
-    <Block color="yellow" pos="(0, 0, 0)" owner="agent1"/>
-    <Block color="yellow" pos="(0, 1, 0)" owner="agent2"/>
+    <Block color="yellow" pos="(0,0,0)" owner="agent1"/>
+    <Block color="yellow" pos="(0,1,0)" owner="agent2"/>
 </World>
 
 # Inventory format
@@ -350,12 +354,13 @@ At each turn, you will receive information about your inventory in this format:
         additional_instructions = """\n\nKeep in mind the following rules:
 - You can only place blocks from *your* inventory.
 - You must always send an action command (`place_block`, `remove_block`, or `wait`) on every turn. You may optionally send a `send_chat` command, which is the *only* way to communicate with your partner.
-- Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals.
-- Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (z=0) or another block (which is eventually connected to the ground).
-- You may only destroy blocks that you have placed. If you need to destroy a block someone else placed, ask them with `send_chat`.
+- Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals than your partner.
+- Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (z=0) or another block (which is eventually connected to the ground). *Blocks do not have to be directly supported*: they can be supported by an adjacent block. For example, if there are blocks at (0,0,0) and (0,0,1), you can place a block at (1,0,1), even though there's no block at (1,0,0), because the (1,0,1) block is supported by the (0,0,1) block.
 - Block placements will *fail* if they do not adhere to gravity or another block is already in that location.
-- The z-axis is the vertical axis. z is the last number in the three-tuple positions.
-- Success is when you have all and only the blocks for the goal.
+- The z-axis is the vertical axis. z is the last number in the three-tuple positions. If z=0, then it's ground level (and will adhere to gravity), otherwise, you need a supporting block. For example, (1,1,0) is x=1, y=1, z=0, and is placeable without any other blocks. (0,1,2) is x=0, y=1, z=2, and is not placeable without supporting blocks.
+- You may only destroy blocks that you have placed. If you need to destroy a block someone else placed, ask them with `send_chat`.
+- Success is when you and your partner have placed all and *only* the blocks for both of your goals (with no extra blocks). The game will end automatically when your goals are complete.
+- Use `end_game` when you believe all goals have been completed or they are impossible. If all agents vote to end the game consecutively, the game will end.
 """
         prompt += additional_instructions
         prompt += f"\n\nYou are {agent.name}."
@@ -443,7 +448,7 @@ At each turn, you will receive information about your inventory in this format:
                 parts.append(f"- {failed['reason']}")
             agent.failed_actions = []  # Clear after showing
         
-        parts.append("\nWhat is your next action? (Remember to use one of: place_block, remove_block, wait, and optionally send_chat)")
+        parts.append("\nWhat is your next action? (Remember to use one of: place_block, remove_block, wait, end_game, and optionally send_chat)")
         
         return "\n".join(parts)
     
@@ -476,6 +481,10 @@ At each turn, you will receive information about your inventory in this format:
         # Parse wait command
         if re.search(r'wait\s*\(\s*\)', response):
             commands.append({'type': 'wait'})
+
+        # Parse end_game command
+        if re.search(r'end_game\s*\(\s*\)', response):
+            commands.append({'type': 'end_game'})
         
         # Parse send_chat commands (can have multiple)
         chat_matches = re.finditer(r'send_chat\s*\(\s*to\s*=\s*"([^"]+)"\s*,\s*message\s*=\s*"([^"]+)"\s*\)', response)
@@ -506,7 +515,7 @@ At each turn, you will receive information about your inventory in this format:
                 return False
             
             # Try to place block
-            success = self.env.place_block(color, pos, agent.name)
+            success, reason = self.env.place_block(color, pos, agent.name)
             if success:
                 agent.remove_from_inventory(color)
                 self.world_actions.append(WorldAction(
@@ -518,11 +527,13 @@ At each turn, you will receive information about your inventory in this format:
                 ))
                 logger.info(f"{agent.name} successfully placed {color} block at {pos}")
             else:
-                reason = f"Cannot place block at {pos} (position occupied or violates gravity)"
+                if not reason:
+                    reason = f"Cannot place block at {pos} (position occupied or violates gravity)"
                 agent.failed_actions.append({'command': command, 'reason': reason})
                 self.failed_actions_count += 1
                 logger.warning(f"{agent.name} failed to place block at {pos}")
             
+            self.consecutive_end_votes = 0
             return success
         
         elif cmd_type == 'remove_block':
@@ -550,6 +561,7 @@ At each turn, you will receive information about your inventory in this format:
                 self.failed_actions_count += 1
                 logger.warning(f"{agent.name} failed to remove block at {pos}")
             
+            self.consecutive_end_votes = 0
             return success
         
         elif cmd_type == 'wait':
@@ -561,8 +573,20 @@ At each turn, you will receive information about your inventory in this format:
                 success=True
             ))
             logger.info(f"{agent.name} waited")
+            self.consecutive_end_votes = 0
             return True
-        
+
+        elif cmd_type == 'end_game':
+            self.consecutive_end_votes += 1
+            self.world_actions.append(WorldAction(
+                agent=agent.name,
+                action_type='end_game',
+                details={},
+                turn=self.turn,
+                success=True
+            ))
+            return True
+
         elif cmd_type == 'send_chat':
             to_agent = command['to']
             message = command['message']
@@ -585,7 +609,7 @@ At each turn, you will receive information about your inventory in this format:
                 logger.warning(f"{agent.name} tried to send message to unknown agent {to_agent}")
             
             return True
-        
+
         return False
     
     def play_turn(self):
@@ -629,7 +653,7 @@ At each turn, you will receive information about your inventory in this format:
         commands = self._parse_llm_response(response, agent)
         
         # Separate world action commands from chat commands
-        world_commands = [c for c in commands if c['type'] in ['place_block', 'remove_block', 'wait']]
+        world_commands = [c for c in commands if c['type'] in ['place_block', 'remove_block', 'wait', 'end_game']]
         chat_commands = [c for c in commands if c['type'] == 'send_chat']
         
         # Execute chat commands (always allowed)
@@ -651,24 +675,29 @@ At each turn, you will receive information about your inventory in this format:
         # Move to next agent
         self.current_agent_idx = (self.current_agent_idx + 1) % len(self.agent_order)
         self.turn += 1
-        
+
         # Check if goal is achieved
         if self.env.is_goal_achieved():
             logger.info("=== GOAL ACHIEVED! ===")
             return True
-        
+
+        # Check if all agents voted to end game
+        if self.consecutive_end_votes >= len(self.agent_order):
+            logger.info("=== ALL AGENTS VOTED TO END GAME ===")
+            return True
+
         return False
     
     def run_game(self, max_turns: int = 100):
         """Run the game until completion or max turns."""
         logger.info("Starting game...")
         
-        for i in range(max_turns):
-            goal_achieved = self.play_turn()
-            if goal_achieved:
+        for _ in range(max_turns):
+            game_over = self.play_turn()  # play_turn returns True if goal achieved or agents voted to end.
+            if game_over:
                 self._print_statistics()
                 return True
-            
+
             # Small delay to avoid rate limiting
             time.sleep(0.5)
         

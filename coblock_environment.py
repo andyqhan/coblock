@@ -381,17 +381,17 @@ class CoblockEnvironment:
 
         return False
 
-    def place_block(self, color: str, pos: Tuple[int, int, int], agent: str) -> bool:
+    def place_block(self, color: str, pos: Tuple[int, int, int], agent: str) -> Tuple[bool, str]:
         """Place a block at the specified position."""
         # Check if position is already occupied
         if pos in self.current_graph:
             logger.warning(f"Cannot place block at {pos}: position already occupied")
-            return False
+            return False, f"Cannot place block at {pos}: position already occupied"
 
         # Check if placement adheres to gravity
         if not (pos[2] == 0 or self._is_adjacent_to_existing(pos)):
             logger.warning(f"Cannot place block at {pos}: does not adhere to gravity")
-            return False
+            return False, f"Cannot place block at {pos}: does not adhere to gravity"
 
         # Create and place the block
         new_block = Block(color=color, pos=pos, owner=agent)
@@ -406,7 +406,7 @@ class CoblockEnvironment:
         if self.visualizer:
             self.visualizer.update()
 
-        return True
+        return True, ""
 
     def remove_block(self, pos: Tuple[int, int, int], agent: str) -> bool:
         """Remove a block at the specified position."""
@@ -512,8 +512,8 @@ def main():
             color = cmd[1]
             pos = eval(cmd[2])  # e.g., "(0,0,0)"
             agent = cmd[3]
-            success = env.place_block(color, pos, agent)
-            print(f"Place block: {'Success' if success else 'Failed'}")
+            success, reason = env.place_block(color, pos, agent)
+            print(f"Place block: {'Success' if success else f'Failed: {reason}'}")
         elif cmd[0] == 'remove' and len(cmd) == 3:
             pos = eval(cmd[1])  # e.g., "(0,0,0)"
             agent = cmd[2]
