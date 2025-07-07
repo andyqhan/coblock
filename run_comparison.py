@@ -59,6 +59,10 @@ Examples:
         print("ERROR: ANTHROPIC_API_KEY not found in environment variables")
         print("Please set it using: export ANTHROPIC_API_KEY=your_key_here")
         sys.exit(1)
+    if not os.getenv("GEMINI_API_KEY"):
+        print("ERROR: GEMINI_API_KEY not found in environment variables")
+        print("Please set it using: export GEMINI_API_KEY=your_key_here")
+        sys.exit(1)
 
     # Get structures
     if args.structures:

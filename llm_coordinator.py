@@ -160,6 +160,90 @@ class AnthropicProvider(LLMProvider):
             logger.error(f"Anthropic API error: {e}")
             raise
 
+class GeminiProvider(LLMProvider):
+    """Google Gemini API provider."""
+
+    def __init__(self):
+        from google import genai
+        from google.genai import types
+        self.genai = genai
+        self.types = types
+        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+    def send_messages(self, messages: List[Dict[str, str]], model: str) -> str:
+        """Send messages to Gemini API."""
+        try:
+            # Convert OpenAI format to Gemini format
+            system_instruction = None
+            conversation_history = []
+
+            for msg in messages:
+                if msg["role"] == "system":
+                    system_instruction = msg["content"]
+                else:
+                    # Gemini uses "user" and "model" roles (instead of "assistant")
+                    role = "model" if msg["role"] == "assistant" else msg["role"]
+                    conversation_history.append({
+                        "role": role,
+                        "parts": [{"text": msg["content"]}]
+                    })
+
+            # Configure the model with system instruction if provided
+            config = self.types.GenerateContentConfig(
+                temperature=0.7,
+                max_output_tokens=1000,
+                system_instruction=system_instruction if system_instruction else None,
+                thinking_config=self.types.ThinkingConfig(include_thoughts=True),
+            )
+
+            # For single turn conversations, use generate_content
+            if len(conversation_history) == 1:
+                response = self.client.models.generate_content(
+                    model=model,
+                    contents=conversation_history[0]["parts"][0]["text"],
+                    config=config
+                )
+                return_string = ""
+                for part in response.candidates[0].content.parts:  # type: ignore
+                    if not part.text:
+                        continue
+                    if part.thought:  # a bool flag
+                        return_string += f"[Thought] {part.text}\n"
+                    else:
+                        return_string += f"[Answer] {part.text}\n"
+                return return_string
+
+            # For multi-turn conversations, use chat
+            else:
+                # Separate the last message from history
+                *history, last_message = conversation_history
+                # if len(conversation_history) == 5:
+                #     logger.info(f"System prompt: {system_instruction}")
+                #     logger.info(f"Conversation history at 5: {conversation_history}")
+
+                # Create chat session with history
+                chat = self.client.chats.create(
+                    model=model,
+                    config=config,
+                    history=history if history else []
+                )
+
+                # Send the last message
+                response = chat.send_message(last_message["parts"][0]["text"])
+                return_string = ""
+                for part in response.candidates[0].content.parts:  # type: ignore
+                    if not part.text:
+                        continue
+                    if part.thought:  # a bool flag
+                        return_string += f"[Thought] {part.text}\n"
+                    else:
+                        return_string += f"[Answer] {part.text}\n"
+                return return_string
+
+        except Exception as e:
+            logger.error(f"Gemini API error: {e}")
+            raise
+
 
 class MockProvider(LLMProvider):
     """Mock LLM provider for testing."""
@@ -297,6 +381,9 @@ class LLMCoordinator:
             
             if any(a.provider == 'anthropic' for a in self.agents.values()):
                 self.providers['anthropic'] = AnthropicProvider()
+
+            if any(a.provider == 'google' for a in self.agents.values()):
+                self.providers['google'] = GeminiProvider()
     
     def get_current_agent(self) -> Agent:
         """Get the current agent whose turn it is."""
@@ -695,6 +782,9 @@ At each turn, you will receive information about your inventory in this format:
         for _ in range(max_turns):
             game_over = self.play_turn()  # play_turn returns True if goal achieved or agents voted to end.
             if game_over:
+                if not self.env.is_goal_achieved() and self.consecutive_end_votes >= len(self.agent_order):
+                    # Game failed if agents voted to end without the goal achieved
+                    return False
                 self._print_statistics()
                 return True
 

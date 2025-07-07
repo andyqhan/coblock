@@ -25,11 +25,11 @@ from llm_coordinator import LLMCoordinator
 
 # Model configurations
 MODEL_CONFIGS = {
-    "sonnet-4": {
-        "name": "sonnet-4",
-        "model": "claude-sonnet-4-20250514",
-        "provider": "anthropic"
-    },
+    # "sonnet-4": {
+    #     "name": "sonnet-4",
+    #     "model": "claude-sonnet-4-20250514",
+    #     "provider": "anthropic"
+    # },
     # "sonnet-3.7": {
     #     "name": "sonnet-3.7",
     #     "model": "claude-3-7-sonnet-20250219",
@@ -40,10 +40,20 @@ MODEL_CONFIGS = {
     #     "model": "claude-3-5-sonnet-20241022",
     #     "provider": "anthropic"
     # },
-    "haiku-3.5": {
-        "name": "haiku-3.5",
-        "model": "claude-3-5-haiku-20241022",
-        "provider": "anthropic"
+    # "haiku-3.5": {
+    #     "name": "haiku-3.5",
+    #     "model": "claude-3-5-haiku-20241022",
+    #     "provider": "anthropic"
+    # },
+    "gemini-2.5-flash": {
+        "name": "gemini-2.5-flash",
+        "model": "gemini-2.5-flash",
+        "provider": "google"
+    },
+    "gemini-2.5-flash-lite": {
+        "name": "gemini-2.5-flash-lite",
+        "model": "gemini-2.5-flash-lite-preview-06-17",
+        "provider": "google"
     }
 }
 
