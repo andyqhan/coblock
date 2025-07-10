@@ -632,8 +632,8 @@ def create_test_structures(output_dir: str = "test_structures") -> List[str]:
         <Block color="red" pos="(1, 0, 0)"/>
     </Goal>
     <Goal>
-        <Block color="blue" pos="(0, 1, 0)"/>
-        <Block color="blue" pos="(1, 1, 0)"/>
+        <Block color="blue" pos="(0, 0, 1)"/>
+        <Block color="blue" pos="(1, 0, 1)"/>
     </Goal>
 </Structure>''')
     structures.append(simple)
@@ -645,13 +645,13 @@ def create_test_structures(output_dir: str = "test_structures") -> List[str]:
 <Structure>
     <Goal>
         <Block color="yellow" pos="(0, 0, 0)"/>
-        <Block color="yellow" pos="(0, 1, 0)"/>
         <Block color="yellow" pos="(0, 0, 1)"/>
+        <Block color="yellow" pos="(0, 1, 0)"/>
     </Goal>
     <Goal>
         <Block color="green" pos="(1, 0, 0)"/>
-        <Block color="green" pos="(1, 1, 0)"/>
         <Block color="green" pos="(1, 0, 1)"/>
+        <Block color="green" pos="(1, 1, 0)"/>
     </Goal>
 </Structure>''')
     structures.append(medium)
@@ -664,13 +664,13 @@ def create_test_structures(output_dir: str = "test_structures") -> List[str]:
     <Goal>
         <Block color="red" pos="(0, 0, 0)"/>
         <Block color="red" pos="(1, 0, 0)"/>
-        <Block color="red" pos="(0, 1, 0)"/>
-        <Block color="red" pos="(1, 1, 0)"/>
+        <Block color="red" pos="(0, 0, 1)"/>
+        <Block color="red" pos="(1, 0, 1)"/>
     </Goal>
     <Goal>
         <Block color="blue" pos="(2, 0, 0)"/>
-        <Block color="blue" pos="(2, 1, 0)"/>
         <Block color="blue" pos="(2, 0, 1)"/>
+        <Block color="blue" pos="(2, 1, 0)"/>
         <Block color="blue" pos="(2, 1, 1)"/>
     </Goal>
 </Structure>''')

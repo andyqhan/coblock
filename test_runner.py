@@ -25,16 +25,16 @@ def create_test_environment_xml(filename: str = "test_structure.xml"):
 <Structure>
     <Goal>
         <Block color="yellow" pos="(0, 0, 0)"/>
-        <Block color="yellow" pos="(0, 1, 0)"/>
+        <Block color="yellow" pos="(0, 0, 1)"/>
         <Block color="yellow" pos="(1, 0, 0)"/>
     </Goal>
     <Goal>
-        <Block color="blue" pos="(0, 0, 1)"/>
-        <Block color="blue" pos="(0, 0, 2)"/>
+        <Block color="blue" pos="(0, 1, 0)"/>
+        <Block color="blue" pos="(0, 2, 0)"/>
     </Goal>
     <Goal>
         <Block color="red" pos="(2, 0, 0)"/>
-        <Block color="red" pos="(2, 1, 0)"/>
+        <Block color="red" pos="(2, 0, 1)"/>
     </Goal>
 </Structure>'''
     
@@ -52,22 +52,22 @@ def create_test_mock_responses(filename: str = "test_responses.json"):
     basic_cooperation = {
         "agent1": [
             "I'll start building the yellow structure. place_block(block_type=yellow, pos=(0,0,0))",
-            "Continuing with yellow blocks. place_block(block_type=yellow, pos=(0,1,0)) and send_chat(to=\"agent2\", message=\"I'm handling the yellow blocks, can you take the blue ones?\")",
+            "Continuing with yellow blocks. place_block(block_type=yellow, pos=(0,0,1)) and send_chat(to=\"agent2\", message=\"I'm handling the yellow blocks, can you take the blue ones?\")",
             "place_block(block_type=yellow, pos=(1,0,0))",
             "My yellow structure is complete! wait() and send_chat(to=\"agent2\", message=\"Yellow blocks done! How's your progress?\")",
             "wait()",
             "I'll help agent3 if needed. wait()"
         ],
         "agent2": [
-            "I'll work on the blue blocks. place_block(block_type=blue, pos=(0,0,1)) and send_chat(to=\"agent1\", message=\"Sure, I'll handle the blue blocks!\")",
-            "Continuing with blue. place_block(block_type=blue, pos=(0,0,2))",
+            "I'll work on the blue blocks. place_block(block_type=blue, pos=(0,1,0)) and send_chat(to=\"agent1\", message=\"Sure, I'll handle the blue blocks!\")",
+            "Continuing with blue. place_block(block_type=blue, pos=(0,2,0))",
             "Blue structure complete! wait() and send_chat(to=\"agent3\", message=\"Blue blocks done. Need help with red?\")",
             "wait()",
             "wait()"
         ],
         "agent3": [
             "I see others are working. I'll focus on red blocks. place_block(block_type=red, pos=(2,0,0))",
-            "Continuing with red. place_block(block_type=red, pos=(2,1,0)) and send_chat(to=\"agent2\", message=\"Thanks! Almost done with red.\")",
+            "Continuing with red. place_block(block_type=red, pos=(2,0,1)) and send_chat(to=\"agent2\", message=\"Thanks! Almost done with red.\")",
             "Red structure complete! wait()",
             "wait()"
         ]
@@ -77,14 +77,14 @@ def create_test_mock_responses(filename: str = "test_responses.json"):
     error_recovery = {
         "agent1": [
             "Let me place a yellow block. place_block(block_type=yellow, pos=(0,0,0))",
-            "Oops, trying to place at wrong position. place_block(block_type=yellow, pos=(0,0,1))",
-            "That failed, let me try the correct position. place_block(block_type=yellow, pos=(0,1,0))",
+            "Oops, trying to place at wrong position. place_block(block_type=yellow, pos=(0,1,0))",
+            "That failed, let me try the correct position. place_block(block_type=yellow, pos=(0,0,1))",
             "Good! Now the last one. place_block(block_type=yellow, pos=(1,0,0))",
             "wait()"
         ],
         "agent2": [
-            "Working on blue blocks. place_block(block_type=blue, pos=(0,0,1))",
-            "Next blue block. place_block(block_type=blue, pos=(0,0,2))",
+            "Working on blue blocks. place_block(block_type=blue, pos=(0,1,0))",
+            "Next blue block. place_block(block_type=blue, pos=(0,2,0))",
             "wait()",
             "wait()"
         ]
@@ -94,20 +94,20 @@ def create_test_mock_responses(filename: str = "test_responses.json"):
     complex_communication = {
         "agent1": [
             "send_chat(to=\"agent2\", message=\"Let's coordinate our building. I'll do yellow, you do blue?\") and place_block(block_type=yellow, pos=(0,0,0))",
-            "place_block(block_type=yellow, pos=(0,1,0)) and send_chat(to=\"agent3\", message=\"Agent3, can you handle the red blocks?\")",
+            "place_block(block_type=yellow, pos=(0,0,1)) and send_chat(to=\"agent3\", message=\"Agent3, can you handle the red blocks?\")",
             "place_block(block_type=yellow, pos=(1,0,0))",
             "send_chat(to=\"agent2\", message=\"Yellow complete!\") and send_chat(to=\"agent3\", message=\"How's the red structure?\") and wait()",
             "wait()"
         ],
         "agent2": [
-            "send_chat(to=\"agent1\", message=\"Sounds good! Starting blue now.\") and place_block(block_type=blue, pos=(0,0,1))",
-            "place_block(block_type=blue, pos=(0,0,2)) and send_chat(to=\"agent3\", message=\"We're making good progress!\")",
+            "send_chat(to=\"agent1\", message=\"Sounds good! Starting blue now.\") and place_block(block_type=blue, pos=(0,1,0))",
+            "place_block(block_type=blue, pos=(0,2,0)) and send_chat(to=\"agent3\", message=\"We're making good progress!\")",
             "send_chat(to=\"agent1\", message=\"Blue done too!\") and wait()",
             "wait()"
         ],
         "agent3": [
             "send_chat(to=\"agent1\", message=\"Yes, I'll do red!\") and place_block(block_type=red, pos=(2,0,0))",
-            "place_block(block_type=red, pos=(2,1,0)) and send_chat(to=\"agent2\", message=\"Indeed! Almost done here.\")",
+            "place_block(block_type=red, pos=(2,0,1)) and send_chat(to=\"agent2\", message=\"Indeed! Almost done here.\")",
             "send_chat(to=\"agent1\", message=\"Red structure complete!\") and wait()",
             "wait()"
         ]

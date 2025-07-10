@@ -418,12 +418,12 @@ class LLMCoordinator:
         """Construct the initial task introduction prompt."""
         prompt = """# Task Summary
 You will act as a Minecraft player collaborating with another agent to build a structure with a blueprint. You need to use the following commands to interact with the Minecraft world:
-## Place a red block at the position of (x: 1, y: 1, z: 0).
-place_block(block_type=red, pos=(1,1,0))
+## Place a red block at the position of (x: 1, y: 0, z: 1).
+place_block(block_type=red, pos=(1,0,1))
 ## Chat with a partner
 send_chat(to="agent2", message="Hello, partner")
-## Destroy the block at the position of (3,1,3). You will receive the block back in your inventory.
-remove_block(pos=(3,1,3))
+## Destroy the block at the position of (3,0,3). You will receive the block back in your inventory.
+remove_block(pos=(3,0,3))
 ## Wait for your turn
 wait()
 ## Vote to end the game (use when you think you're done with the game)
@@ -433,7 +433,7 @@ end_game()
 At each turn, you will receive information about the world state in this format:
 <World>
     <Block color="yellow" pos="(0,0,0)" owner="agent1"/>
-    <Block color="yellow" pos="(0,1,0)" owner="agent2"/>
+    <Block color="yellow" pos="(0,0,1)" owner="agent2"/>
 </World>
 
 # Inventory format
@@ -476,9 +476,9 @@ At each turn, you will receive information about your inventory in this format:
 - Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals than your partner."""
         
         additional_instructions = goal_instructions + """
-- Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (z=0) or another block (which is eventually connected to the ground). *Blocks do not have to be directly supported*: they can be supported by an adjacent block. For example, if there are blocks at (0,0,0) and (0,0,1), you can place a block at (1,0,1), even though there's no block at (1,0,0), because the (1,0,1) block is supported by the (0,0,1) block.
+- Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (y=0) or another block (which is eventually connected to the ground). *Blocks do not have to be directly supported*: they can be supported by an adjacent block. For example, if there are blocks at (0,0,0) and (0,1,0), you can place a block at (1,1,0), even though there's no block at (1,0,0), because the (1,1,0) block is supported by the (0,1,0) block.
 - Block placements will *fail* if they do not adhere to gravity or another block is already in that location.
-- The z-axis is the vertical axis. z is the last number in the three-tuple positions. If z=0, then it's ground level (and will adhere to gravity), otherwise, you need a supporting block. For example, (1,1,0) is x=1, y=1, z=0, and is placeable without any other blocks. (0,1,2) is x=0, y=1, z=2, and is not placeable without supporting blocks.
+- The y-axis is the vertical axis. y is the second number in the three-tuple positions. If y=0, then it's ground level (and will adhere to gravity), otherwise, you need a supporting block. For example, (1,0,1) is x=1, y=0, z=1, and is placeable without any other blocks. (0,2,1) is x=0, y=2, z=1, and is not placeable without supporting blocks.
 - You may only destroy blocks that you have placed. If you need to destroy a block someone else placed, ask them with `send_chat`.
 - Success is when you and your partner have placed all and *only* the blocks for both of your goals (with no extra blocks). The game will end automatically when your goals are complete.
 - Use `end_game` when you believe all goals have been completed or they are impossible. If all agents vote to end the game consecutively, the game will end.

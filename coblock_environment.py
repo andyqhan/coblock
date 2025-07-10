@@ -224,19 +224,19 @@ class BlockVisualizer:
             # Set axis limits with some padding
             padding = 1
             self.ax.set_xlim(min(x_coords) - padding, max(x_coords) + padding)
-            self.ax.set_ylim(min(y_coords) - padding, max(y_coords) + padding)
-            self.ax.set_zlim(-0.5, max(z_coords) + padding)
+            self.ax.set_ylim(-0.5, max(y_coords) + padding)
+            self.ax.set_zlim(min(z_coords) - padding, max(z_coords) + padding)
         else:
             # Default view if no blocks
             self.ax.set_xlim(-2, 2)
-            self.ax.set_ylim(-2, 2)
-            self.ax.set_zlim(-0.5, 3)
+            self.ax.set_ylim(-0.5, 3)
+            self.ax.set_zlim(-2, 2)
 
         self._set_equal_axes()
 
-        # Draw grid at z=0
-        xx, yy = np.meshgrid(range(-5, 6), range(-5, 6))
-        self.ax.plot_surface(xx, yy, np.zeros_like(xx), alpha=0.1, color='gray')
+        # Draw grid at y=0
+        xx, zz = np.meshgrid(range(-5, 6), range(-5, 6))
+        self.ax.plot_surface(xx, np.zeros_like(xx), zz, alpha=0.1, color='gray')
 
         # Update the display
         plt.draw()
@@ -308,10 +308,10 @@ class CoblockEnvironment:
     def _connect_neighbors(self, graph: Dict[Tuple[int, int, int], Block]):
         """Connect blocks to their neighbors in the graph."""
         directions = {
-            'up': (0, 0, 1),
-            'down': (0, 0, -1),
-            'north': (0, 1, 0),
-            'south': (0, -1, 0),
+            'up': (0, 1, 0),
+            'down': (0, -1, 0),
+            'north': (0, 0, 1),
+            'south': (0, 0, -1),
             'east': (1, 0, 0),
             'west': (-1, 0, 0)
         }
@@ -327,11 +327,11 @@ class CoblockEnvironment:
         if not graph:
             return True
 
-        # Find all blocks on the ground (z=0)
-        ground_blocks = {pos for pos in graph if pos[2] == 0}
+        # Find all blocks on the ground (y=0)
+        ground_blocks = {pos for pos in graph if pos[1] == 0}
 
         if not ground_blocks:
-            logger.error("No blocks on the ground (z=0)")
+            logger.error("No blocks on the ground (y=0)")
             return False
 
         # Use BFS to find all blocks connected to ground
@@ -370,9 +370,9 @@ class CoblockEnvironment:
         """Check if a position is adjacent to at least one existing block."""
         if not self.current_graph:
             # First block must be on the ground
-            return pos[2] == 0
+            return pos[1] == 0
 
-        directions = [(0, 0, 1), (0, 0, -1), (0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0)]
+        directions = [(0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1), (1, 0, 0), (-1, 0, 0)]
 
         for dx, dy, dz in directions:
             neighbor_pos = (pos[0] + dx, pos[1] + dy, pos[2] + dz)
@@ -389,7 +389,7 @@ class CoblockEnvironment:
             return False, f"Cannot place block at {pos}: position already occupied"
 
         # Check if placement adheres to gravity
-        if not (pos[2] == 0 or self._is_adjacent_to_existing(pos)):
+        if not (pos[1] == 0 or self._is_adjacent_to_existing(pos)):
             logger.warning(f"Cannot place block at {pos}: does not adhere to gravity")
             return False, f"Cannot place block at {pos}: does not adhere to gravity"
 

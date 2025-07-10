@@ -83,6 +83,12 @@
                             <input type="range" min="500" max="3000" step="100" v-model="playSpeed">
                             <span>{{ playSpeed }}ms</span>
                         </div>
+                        <div class="coordinate-toggle">
+                            <label>
+                                <input type="checkbox" v-model="useYAsUp" @change="toggleCoordinateSystem">
+                                Use Y-axis as up (uncheck for Z-axis up)
+                            </label>
+                        </div>
                     </div>
 
                     <div class="chat-window">
@@ -281,7 +287,7 @@
                 this.renderer.render(this.scene, this.camera);
             }
 
-            createWireframeBlock(pos, color) {
+            createWireframeBlock(pos, color, useYAsUp = false) {
                 const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
                 const edges = new THREE.EdgesGeometry(geometry);
                 const material = new THREE.LineBasicMaterial({
@@ -291,23 +297,31 @@
                     linewidth: 2
                 });
                 const wireframe = new THREE.LineSegments(edges, material);
-                // Map coordinates: game (x,y,z) -> Three.js (x,z,y)
-                wireframe.position.set(pos[0], pos[2], pos[1]);
+                // Map coordinates based on coordinate system toggle
+                if (useYAsUp) {
+                    wireframe.position.set(pos[0], pos[1], pos[2]);
+                } else {
+                    wireframe.position.set(pos[0], pos[2], pos[1]);
+                }
 
                 // Add subtle pulsing animation
                 wireframe.userData = { time: 0 };
                 return wireframe;
             }
 
-            createSolidBlock(pos, color) {
+            createSolidBlock(pos, color, useYAsUp = false) {
                 const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
                 const material = new THREE.MeshPhongMaterial({
                     color: this.colorMap[color] || 0xCCCCCC,
                     shininess: 30
                 });
                 const cube = new THREE.Mesh(geometry, material);
-                // Map coordinates: game (x,y,z) -> Three.js (x,z,y)
-                cube.position.set(pos[0], pos[2], pos[1]);
+                // Map coordinates based on coordinate system toggle
+                if (useYAsUp) {
+                    cube.position.set(pos[0], pos[1], pos[2]);
+                } else {
+                    cube.position.set(pos[0], pos[2], pos[1]);
+                }
                 cube.castShadow = true;
                 cube.receiveShadow = true;
 
@@ -324,19 +338,19 @@
                 return cube;
             }
 
-            updateGoalBlocks(goalState) {
+            updateGoalBlocks(goalState, useYAsUp = false) {
                 while (this.goalBlocks.children.length > 0) this.goalBlocks.remove(this.goalBlocks.children[0]);
                 for (const [posStr, color] of Object.entries(goalState)) {
                     const pos = JSON.parse(posStr);
-                    this.goalBlocks.add(this.createWireframeBlock(pos, color));
+                    this.goalBlocks.add(this.createWireframeBlock(pos, color, useYAsUp));
                 }
             }
 
-            updateCurrentBlocks(currentState) {
+            updateCurrentBlocks(currentState, useYAsUp = false) {
                 while (this.currentBlocks.children.length > 0) this.currentBlocks.remove(this.currentBlocks.children[0]);
                 for (const [posStr, blockData] of Object.entries(currentState)) {
                     const pos = JSON.parse(posStr);
-                    this.currentBlocks.add(this.createSolidBlock(pos, blockData.color));
+                    this.currentBlocks.add(this.createSolidBlock(pos, blockData.color, useYAsUp));
                 }
             }
         }
@@ -349,7 +363,7 @@
                     currentAgent: null, agent1CurrentAction: null, agent1CurrentResponse: null,
                     agent2CurrentAction: null, agent2CurrentResponse: null, chatMessages: [],
                     notification: null, goalState: {}, currentState: {},
-                    playInterval: null
+                    playInterval: null, useYAsUp: false
                 };
             },
             mounted() {
@@ -471,8 +485,8 @@
 
                     console.log("▶️ [Visualizer] Final currentState before rendering:", this.currentState);
 
-                    this.sceneManager.updateGoalBlocks(this.goalState);
-                    this.sceneManager.updateCurrentBlocks(this.currentState);
+                    this.sceneManager.updateGoalBlocks(this.goalState, this.useYAsUp);
+                    this.sceneManager.updateCurrentBlocks(this.currentState, this.useYAsUp);
 
                     // Scroll chat to bottom after DOM update
                     this.$nextTick(() => {
@@ -544,6 +558,11 @@
                     } else {
                         clearInterval(this.playInterval);
                     }
+                },
+
+                toggleCoordinateSystem() {
+                    // Update visualization immediately when coordinate system changes
+                    this.updateVisualization();
                 },
 
                 beforeUnmount() {
