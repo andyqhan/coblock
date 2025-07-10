@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Agent Game Visualizer</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="parseLogs.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <div v-if="!logData" class="file-upload" @drop.prevent="handleDrop" @dragover.prevent="dragOver = true" @dragleave="dragOver = false">
+            <div class="file-upload-content" :class="{ dragover: dragOver }">
+                <h2>Upload Log File</h2>
+                <p>Drag and drop a log file here or click to browse</p>
+                <label class="file-label">
+                    Choose File
+                    <input type="file" class="file-input" @change="handleFileSelect" accept=".txt,.log">
+                </label>
+            </div>
+        </div>
+
+        <div v-if="trials.length > 0 && !currentTrial" class="trial-selector">
+            <div class="trial-selector-content">
+                <h2>Select Trial</h2>
+                <div v-for="(trial, index) in trials" :key="index" class="trial-item" @click="selectTrial(trial)">
+                    <h3>Trial {{ trial.trial }}</h3>
+                    <p><strong>Models:</strong> {{ trial.agent1 }} vs {{ trial.agent2 }}</p>
+                    <p><strong>Structure:</strong> {{ trial.structure || 'Unknown' }}</p>
+                    <p><strong>Result:</strong> {{ trial.success ? 'SUCCESS' : 'FAILURE' }}</p>
+                    <p><strong>Turns:</strong> {{ trial.total_turns }}</p>
+                </div>
+            </div>
+        </div>
+
+        <template v-if="currentTrial">
+            <div class="header">
+                <h1>LLM Agent Game Visualizer</h1>
+                <div class="trial-info">
+                    <button class="back-btn" @click="backToTrialSelection">← Back to Trials</button>
+                    <span><strong>{{ currentTrial.agent1 }}</strong> vs <strong>{{ currentTrial.agent2 }}</strong></span>
+                    <span>Structure: {{ currentTrial.structure || 'Unknown' }}</span>
+                    <span>Result: {{ currentTrial.success ? 'SUCCESS' : 'FAILURE' }}</span>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="sidebar agent1" :class="{ dimmed: currentAgent !== 'agent1' }">
+                    <div class="sidebar-header">
+                        <div class="agent-name">Agent 1</div>
+                        <div class="model-name">{{ currentTrial.agent1 }}</div>
+                    </div>
+                    <div class="sidebar-content">
+                        <div v-if="agent1CurrentAction" class="action-section">
+                            <div class="action-label">Current Action</div>
+                            <div class="action-display" :class="{ success: agent1CurrentAction.success, failed: !agent1CurrentAction.success }">
+                                {{ agent1CurrentAction.action }}
+                            </div>
+                        </div>
+                        <div v-if="agent1CurrentResponse" class="response-section">
+                            <div class="action-label">Response</div>
+                            <div class="response-content">{{ agent1CurrentResponse }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="center-content">
+                    <div class="visualizer">
+                        <canvas id="three-canvas"></canvas>
+                    </div>
+
+                    <div class="controls">
+                        <div class="turn-info">
+                            <div class="turn-display">Turn {{ currentTurnIndex + 1 }} / {{ currentTrial.turns.length }}</div>
+                        </div>
+                        <button class="control-btn" @click="previousTurn" :disabled="currentTurnIndex === 0">Previous</button>
+                        <button class="control-btn primary" @click="togglePlay">{{ playing ? 'Pause' : 'Play' }}</button>
+                        <button class="control-btn" @click="nextTurn" :disabled="currentTurnIndex >= currentTrial.turns.length - 1">Next</button>
+                        <div class="speed-control">
+                            <label>Speed:</label>
+                            <input type="range" min="500" max="3000" step="100" v-model="playSpeed">
+                            <span>{{ playSpeed }}ms</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-window">
+                        <div class="chat-header">
+                            <span>Agent Chat ({{ chatMessages.length }})</span>
+                        </div>
+                        <div class="chat-messages" ref="chatMessagesContainer">
+                            <div v-for="(msg, index) in chatMessages" :key="index" class="chat-message" :class="msg.from">
+                                <div class="chat-sender">{{ msg.from === 'agent1' ? 'Agent 1' : 'Agent 2' }}</div>
+                                <div class="chat-content">{{ msg.message }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="notification" class="notification">
+                        {{ notification }}
+                    </div>
+                </div>
+
+                <div class="sidebar agent2" :class="{ dimmed: currentAgent !== 'agent2' }">
+                    <div class="sidebar-header">
+                        <div class="agent-name">Agent 2</div>
+                        <div class="model-name">{{ currentTrial.agent2 }}</div>
+                    </div>
+                    <div class="sidebar-content">
+                        <div v-if="agent2CurrentAction" class="action-section">
+                            <div class="action-label">Current Action</div>
+                            <div class="action-display" :class="{ success: agent2CurrentAction.success, failed: !agent2CurrentAction.success }">
+                                {{ agent2CurrentAction.action }}
+                            </div>
+                        </div>
+                        <div v-if="agent2CurrentResponse" class="response-section">
+                            <div class="action-label">Response</div>
+                            <div class="response-content">{{ agent2CurrentResponse }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        class SceneManager {
+            constructor(canvas) {
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x050505);
+
+                this.camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+                this.camera.position.set(10, 10, 10);
+                this.camera.lookAt(0, 0, 0);
+
+                this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+                this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                // Improved lighting for better depth perception
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+                this.scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+                directionalLight.position.set(10, 20, 10);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.camera.near = 0.1;
+                directionalLight.shadow.camera.far = 50;
+                directionalLight.shadow.camera.left = -15;
+                directionalLight.shadow.camera.right = 15;
+                directionalLight.shadow.camera.top = 15;
+                directionalLight.shadow.camera.bottom = -15;
+                this.scene.add(directionalLight);
+
+                // Ground plane at y=0
+                const groundGeometry = new THREE.PlaneGeometry(30, 30);
+                const groundMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x1a1a1a,
+                    roughness: 0.8,
+                    metalness: 0.2
+                });
+                const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+                ground.rotation.x = -Math.PI / 2; // Rotate to be horizontal
+                ground.position.y = -0.5; // Place just below blocks
+                ground.receiveShadow = true;
+                this.scene.add(ground);
+
+                // Grid on the ground
+                const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
+                gridHelper.position.y = -0.49; // Just above ground to avoid z-fighting
+                this.scene.add(gridHelper);
+
+                // Improved camera controls
+                this.controls = {
+                    rotationSpeed: 0.005,
+                    damping: 0.95,
+                    distance: 15,
+                    minDistance: 5,
+                    maxDistance: 30,
+                    targetX: 0,
+                    targetY: 0,
+                    currentX: 0,
+                    currentY: 0,
+                    autoRotate: false,
+                    autoRotateSpeed: 0.001
+                };
+
+                // Mouse controls
+                this.isDragging = false;
+                this.previousMouseX = 0;
+                this.previousMouseY = 0;
+
+                canvas.addEventListener('mousedown', (e) => {
+                    this.isDragging = true;
+                    this.previousMouseX = e.clientX;
+                    this.previousMouseY = e.clientY;
+                    this.controls.autoRotate = false;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    this.isDragging = false;
+                });
+
+                canvas.addEventListener('mousemove', (e) => {
+                    if (!this.isDragging) return;
+
+                    const deltaX = e.clientX - this.previousMouseX;
+                    const deltaY = e.clientY - this.previousMouseY;
+
+                    this.controls.targetX -= deltaX * this.controls.rotationSpeed;
+                    this.controls.targetY = Math.max(-Math.PI/3, Math.min(Math.PI/3,
+                        this.controls.targetY + deltaY * this.controls.rotationSpeed));
+
+                    this.previousMouseX = e.clientX;
+                    this.previousMouseY = e.clientY;
+                });
+
+                // Mouse wheel for zoom
+                canvas.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    this.controls.distance = Math.max(this.controls.minDistance,
+                        Math.min(this.controls.maxDistance, this.controls.distance + e.deltaY * 0.01));
+                });
+
+                // Double click to reset view
+                canvas.addEventListener('dblclick', () => {
+                    this.controls.targetX = 0;
+                    this.controls.targetY = 0.3;
+                    this.controls.distance = 15;
+                    this.controls.autoRotate = true;
+                });
+
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                });
+
+                this.goalBlocks = new THREE.Group();
+                this.currentBlocks = new THREE.Group();
+                this.scene.add(this.goalBlocks);
+                this.scene.add(this.currentBlocks);
+
+                this.colorMap = {
+                    'red': 0xFF0000, 'blue': 0x0000FF, 'yellow': 0xFFFF00, 'green': 0x00FF00,
+                    'brown': 0x8B4513, 'gray': 0x808080, 'stone': 0xA9A9A9, 'wood': 0xDEB887,
+                    'sandstone': 0xF4A460, 'gold': 0xFFD700, 'white': 0xFFFFFF, 'black': 0x000000,
+                    'orange': 0xFFA500, 'purple': 0x800080
+                };
+
+                // Initialize camera position
+                this.controls.targetY = 0.3;
+                this.controls.autoRotate = false;
+
+                this.animate();
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                // Smooth camera movement with damping
+                this.controls.currentX += (this.controls.targetX - this.controls.currentX) * (1 - this.controls.damping);
+                this.controls.currentY += (this.controls.targetY - this.controls.currentY) * (1 - this.controls.damping);
+
+                // Auto rotation
+                if (this.controls.autoRotate) {
+                    this.controls.targetX += this.controls.autoRotateSpeed;
+                }
+
+                // Update camera position
+                const centerX = 2.5, centerY = 2, centerZ = 2.5;
+                this.camera.position.x = centerX + this.controls.distance * Math.sin(this.controls.currentX) * Math.cos(this.controls.currentY);
+                this.camera.position.y = centerY + this.controls.distance * Math.sin(this.controls.currentY);
+                this.camera.position.z = centerZ + this.controls.distance * Math.cos(this.controls.currentX) * Math.cos(this.controls.currentY);
+                this.camera.lookAt(centerX, centerY, centerZ);
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            createWireframeBlock(pos, color) {
+                const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+                const edges = new THREE.EdgesGeometry(geometry);
+                const material = new THREE.LineBasicMaterial({
+                    color: this.colorMap[color] || 0xCCCCCC,
+                    opacity: 0.5,
+                    transparent: true,
+                    linewidth: 2
+                });
+                const wireframe = new THREE.LineSegments(edges, material);
+                // Map coordinates: game (x,y,z) -> Three.js (x,z,y)
+                wireframe.position.set(pos[0], pos[2], pos[1]);
+
+                // Add subtle pulsing animation
+                wireframe.userData = { time: 0 };
+                return wireframe;
+            }
+
+            createSolidBlock(pos, color) {
+                const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+                const material = new THREE.MeshPhongMaterial({
+                    color: this.colorMap[color] || 0xCCCCCC,
+                    shininess: 30
+                });
+                const cube = new THREE.Mesh(geometry, material);
+                // Map coordinates: game (x,y,z) -> Three.js (x,z,y)
+                cube.position.set(pos[0], pos[2], pos[1]);
+                cube.castShadow = true;
+                cube.receiveShadow = true;
+
+                // Darker edges for better definition
+                const edgeGeometry = new THREE.EdgesGeometry(geometry);
+                const edgeMaterial = new THREE.LineBasicMaterial({
+                    color: 0x000000,
+                    opacity: 0.3,
+                    transparent: true
+                });
+                const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
+                cube.add(edges);
+
+                return cube;
+            }
+
+            updateGoalBlocks(goalState) {
+                while (this.goalBlocks.children.length > 0) this.goalBlocks.remove(this.goalBlocks.children[0]);
+                for (const [posStr, color] of Object.entries(goalState)) {
+                    const pos = JSON.parse(posStr);
+                    this.goalBlocks.add(this.createWireframeBlock(pos, color));
+                }
+            }
+
+            updateCurrentBlocks(currentState) {
+                while (this.currentBlocks.children.length > 0) this.currentBlocks.remove(this.currentBlocks.children[0]);
+                for (const [posStr, blockData] of Object.entries(currentState)) {
+                    const pos = JSON.parse(posStr);
+                    this.currentBlocks.add(this.createSolidBlock(pos, blockData.color));
+                }
+            }
+        }
+
+        createApp({
+            data() {
+                return {
+                    logData: null, trials: [], currentTrial: null, currentTurnIndex: 0,
+                    playing: false, playSpeed: 1500, dragOver: false, sceneManager: null,
+                    currentAgent: null, agent1CurrentAction: null, agent1CurrentResponse: null,
+                    agent2CurrentAction: null, agent2CurrentResponse: null, chatMessages: [],
+                    notification: null, goalState: {}, currentState: {},
+                    playInterval: null
+                };
+            },
+            mounted() {
+                this.$watch('currentTrial', (newTrial) => {
+                    if (newTrial) {
+                        this.$nextTick(() => {
+                            const canvas = document.getElementById('three-canvas');
+                            if (canvas) {
+                                this.sceneManager = new SceneManager(canvas);
+                                this.initializeGameState();
+                                this.updateVisualization();
+                            }
+                        });
+                    }
+                });
+            },
+            methods: {
+                handleDrop(e) {
+                    this.dragOver = false;
+                    const file = e.dataTransfer.files[0];
+                    if (file) this.readFile(file);
+                },
+
+                handleFileSelect(e) {
+                    const file = e.target.files[0];
+                    if (file) this.readFile(file);
+                },
+
+                readFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.logData = e.target.result;
+                        this.parseTrials();
+                    };
+                    reader.readAsText(file);
+                },
+
+                parseTrials() {
+                    console.log("📝 [Parser] Using external parser to parse log file...");
+                    try {
+                        // Use the external parseGameLogs function
+                        const parsedTrials = parseGameLogs(this.logData);
+
+                        // Use getGoal function to get goal states for each trial
+                        this.trials = parsedTrials.map((trial) => ({
+                            ...trial,
+                            goalState: trial.structure ? getGoal(trial.structure) : {}
+                        }));
+
+                        console.log("✅ [Parser] Finished parsing. Found trials:", this.trials);
+
+                        if (this.trials.length === 1) {
+                            this.selectTrial(this.trials[0]);
+                        }
+                    } catch (error) {
+                        console.error("❌ [Parser] Error parsing logs:", error);
+                        alert("Error parsing log file: " + error.message);
+                    }
+                },
+
+                selectTrial(trial) {
+                    this.currentTrial = trial;
+                    this.currentTurnIndex = 0;
+                },
+
+                backToTrialSelection() {
+                    this.currentTrial = null;
+                    this.currentTurnIndex = 0;
+                    this.playing = false;
+                    if (this.playInterval) {
+                        clearInterval(this.playInterval);
+                    }
+                },
+
+                initializeGameState() {
+                    this.goalState = this.currentTrial.goalState || {};
+                    this.currentState = {};
+                    this.chatMessages = [];
+                },
+
+                updateVisualization() {
+                    if (!this.sceneManager) return;
+
+                    console.group(`🔄 [Visualizer] Updating to turn ${this.currentTurnIndex}`);
+
+                    this.currentState = {};
+                    this.chatMessages = [];
+
+                    for (let i = 0; i <= this.currentTurnIndex; i++) {
+                        const turn = this.currentTrial.turns[i];
+                        if (!turn) continue;
+
+                        console.log(`[Visualizer] Processing Turn ${i}: Agent = ${turn.agent}`);
+
+                        // Process the main action
+                        if (turn.action && turn.action !== 'unknown') {
+                            if (turn.action.includes('place_block') && turn.success && turn.block_pos) {
+                                const posArray = turn.block_pos.split(',').map(n => parseInt(n.trim()));
+                                this.currentState[JSON.stringify(posArray)] = {
+                                    color: turn.block_color,
+                                    owner: turn.agent
+                                };
+                                console.log(`[Visualizer] Added ${turn.block_color} block at ${JSON.stringify(posArray)} by ${turn.agent}`);
+                            } else if (turn.action.includes('remove_block') && turn.success && turn.block_pos) {
+                                const posArray = turn.block_pos.split(',').map(n => parseInt(n.trim()));
+                                delete this.currentState[JSON.stringify(posArray)];
+                            }
+                        }
+
+                        // Process chat messages
+                        if (turn.chat_recipient && turn.chat_content) {
+                            this.chatMessages.push({
+                                from: turn.agent,
+                                to: turn.chat_recipient,
+                                message: turn.chat_content
+                            });
+                        }
+                    }
+
+                    console.log("▶️ [Visualizer] Final currentState before rendering:", this.currentState);
+
+                    this.sceneManager.updateGoalBlocks(this.goalState);
+                    this.sceneManager.updateCurrentBlocks(this.currentState);
+
+                    // Scroll chat to bottom after DOM update
+                    this.$nextTick(() => {
+                        if (this.$refs.chatMessagesContainer) {
+                            this.$refs.chatMessagesContainer.scrollTop = this.$refs.chatMessagesContainer.scrollHeight;
+                        }
+                    });
+
+                    const currentTurn = this.currentTrial.turns[this.currentTurnIndex];
+                    if (currentTurn) {
+                        this.currentAgent = currentTurn.agent;
+
+                        if (currentTurn.agent === 'agent1') {
+                            this.agent1CurrentAction = currentTurn;
+                            this.agent1CurrentResponse = currentTurn.response;
+                            this.agent2CurrentAction = null;
+                            this.agent2CurrentResponse = null;
+                        } else {
+                            this.agent2CurrentAction = currentTurn;
+                            this.agent2CurrentResponse = currentTurn.response;
+                            this.agent1CurrentAction = null;
+                            this.agent1CurrentResponse = null;
+                        }
+
+                        if (currentTurn.success) {
+                            if (currentTurn.action.includes('place_block')) {
+                                this.showNotification(`${currentTurn.agent === 'agent1' ? 'Agent 1' : 'Agent 2'} placed ${currentTurn.block_color} block`);
+                            } else if (currentTurn.action.includes('remove_block')) {
+                                this.showNotification(`${currentTurn.agent === 'agent1' ? 'Agent 1' : 'Agent 2'} removed block`);
+                            } else if (currentTurn.action.includes('end_game')) {
+                                this.showNotification(`${currentTurn.agent === 'agent1' ? 'Agent 1' : 'Agent 2'} voted to end game`);
+                            }
+                        }
+                    }
+
+                    console.groupEnd();
+                },
+
+                showNotification(message) {
+                    this.notification = message;
+                    setTimeout(() => { this.notification = null; }, 2000);
+                },
+
+                previousTurn() {
+                    if (this.currentTurnIndex > 0) {
+                        this.currentTurnIndex--;
+                        this.updateVisualization();
+                    }
+                },
+
+                nextTurn() {
+                    if (this.currentTurnIndex < this.currentTrial.turns.length - 1) {
+                        this.currentTurnIndex++;
+                        this.updateVisualization();
+                    }
+                },
+
+                togglePlay() {
+                    this.playing = !this.playing;
+                    if (this.playing) {
+                        this.playInterval = setInterval(() => {
+                            if (this.currentTurnIndex < this.currentTrial.turns.length - 1) {
+                                this.nextTurn();
+                            } else {
+                                this.playing = false;
+                                clearInterval(this.playInterval);
+                            }
+                        }, this.playSpeed);
+                    } else {
+                        clearInterval(this.playInterval);
+                    }
+                },
+
+                beforeUnmount() {
+                    if (this.playInterval) {
+                        clearInterval(this.playInterval);
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

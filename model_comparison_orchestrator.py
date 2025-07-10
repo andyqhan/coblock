@@ -45,16 +45,21 @@ MODEL_CONFIGS = {
     #     "model": "claude-3-5-haiku-20241022",
     #     "provider": "anthropic"
     # },
-    "gemini-2.5-flash": {
-        "name": "gemini-2.5-flash",
-        "model": "gemini-2.5-flash",
-        "provider": "google"
-    },
-    "gemini-2.5-flash-lite": {
-        "name": "gemini-2.5-flash-lite",
-        "model": "gemini-2.5-flash-lite-preview-06-17",
-        "provider": "google"
+    "opus-4": {
+        "name": "opus-4",
+        "model": "claude-opus-4-20250514",
+        "provider": "anthropic"
     }
+    # "gemini-2.5-flash": {
+    #     "name": "gemini-2.5-flash",
+    #     "model": "gemini-2.5-flash",
+    #     "provider": "google"
+    # },
+    # "gemini-2.5-flash-lite": {
+    #     "name": "gemini-2.5-flash-lite",
+    #     "model": "gemini-2.5-flash-lite-preview-06-17",
+    #     "provider": "google"
+    # }
 }
 
 

@@ -544,7 +544,7 @@ At each turn, you will receive information about your inventory in this format:
         commands = []
         
         # Parse place_block command
-        place_match = re.search(r'place_block\s*\(\s*block_type\s*=\s*(\w+)\s*,\s*pos\s*=\s*\(([^)]+)\)\s*\)', response)
+        place_match = re.search(r'place_block\s*\(\s*block_type\s*=\s*\"?(\w+)\"?\s*,\s*pos\s*=\s*\(\"?([^)]+)\"?\)\s*\)', response)
         if place_match:
             color = place_match.group(1)
             pos_str = place_match.group(2)
@@ -625,13 +625,14 @@ At each turn, you will receive information about your inventory in this format:
         
         elif cmd_type == 'remove_block':
             pos = command['pos']
+            state = self.env.get_current_state()
+            if pos in state:
+                color = state[pos]['color']
             success = self.env.remove_block(pos, agent.name)
             
             if success:
                 # Add block back to inventory (assuming we know the color)
-                state = self.env.get_current_state()
-                if pos in state:
-                    color = state[pos]['color']
+                if color:
                     agent.add_to_inventory(color)
                 
                 self.world_actions.append(WorldAction(
