@@ -74,6 +74,7 @@ class Agent:
         lines.append("</Goals>")
         return "\n".join(lines)
     
+    
     def get_dialogues_xml(self, other_agents: List[str]) -> str:
         """Get dialogues with other agents in XML format."""
         if not self.chat_messages:
@@ -288,7 +289,8 @@ class LLMCoordinator:
     """Coordinates LLM agents in the block environment."""
     
     def __init__(self, environment_xml: str, agent_configs: List[Dict[str, str]], 
-                 visualize: bool = False, mock_responses: Optional[Dict[str, List[str]]] = None):
+                 visualize: bool = False, mock_responses: Optional[Dict[str, List[str]]] = None,
+                 perfect_information: bool = False):
         """
         Initialize the coordinator.
         
@@ -297,12 +299,14 @@ class LLMCoordinator:
             agent_configs: List of dicts with 'name', 'model', and 'provider' for each agent
             visualize: Whether to enable 3D visualization
             mock_responses: Optional mock responses for testing
+            perfect_information: If True, agents get full goal information instead of just their own goals
         """
         # Initialize environment
         self.env = CoblockEnvironment(environment_xml, visualize=visualize)
         
         # Parse goals from XML
         self.goals = self._parse_goals(environment_xml)
+        self.perfect_information = perfect_information
         
         # Initialize agents
         self.agents: Dict[str, Agent] = {}
@@ -394,6 +398,22 @@ class LLMCoordinator:
         next_idx = (self.current_agent_idx + 1) % len(self.agent_order)
         return self.agent_order[next_idx]
     
+    def get_full_goals_xml(self) -> str:
+        """Get all goals in XML format (for perfect information mode)."""
+        if not self.goals:
+            return "<Goals>\n</Goals>"
+        
+        lines = ["<Goals>"]
+        for i, goal in enumerate(self.goals):
+            lines.append(f'    <Goal id="{i+1}">')
+            for block in goal.findall('Block'):
+                color = block.get('color')
+                pos = block.get('pos')
+                lines.append(f'        <Block color="{color}" pos="{pos}"/>')
+            lines.append('    </Goal>')
+        lines.append("</Goals>")
+        return "\n".join(lines)
+    
     def _construct_initial_prompt(self, agent: Agent) -> str:
         """Construct the initial task introduction prompt."""
         prompt = """# Task Summary
@@ -437,11 +457,25 @@ At each turn, you will receive information about your inventory in this format:
 #     <Message sender="agent3" to="agent1" message="I'm agent3!"/>
 # </Dialogue>
 
-        prompt += agent.get_goals_xml()
-        additional_instructions = """\n\nKeep in mind the following rules:
+        # Add goal information based on perfect_information setting
+        if self.perfect_information:
+            prompt += "\n\n# Full structure information (all goals)\n"
+            prompt += self.get_full_goals_xml()
+            prompt += "# Your individual task\n"
+            prompt += agent.get_goals_xml()
+            goal_instructions = """\n\nKeep in mind the following rules:
 - You can only place blocks from *your* inventory.
 - You must always send an action command (`place_block`, `remove_block`, or `wait`) on every turn. You may optionally send a `send_chat` command, which is the *only* way to communicate with your partner.
-- Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals than your partner.
+- You and your partner can see ALL goals above. You are responsible for your individual task, but you should coordinate to build the complete structure efficiently."""
+        else:
+            prompt += "# Your individual task\n"
+            prompt += agent.get_goals_xml()
+            goal_instructions = """\n\nKeep in mind the following rules:
+- You can only place blocks from *your* inventory.
+- You must always send an action command (`place_block`, `remove_block`, or `wait`) on every turn. You may optionally send a `send_chat` command, which is the *only* way to communicate with your partner.
+- Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals than your partner."""
+        
+        additional_instructions = goal_instructions + """
 - Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (z=0) or another block (which is eventually connected to the ground). *Blocks do not have to be directly supported*: they can be supported by an adjacent block. For example, if there are blocks at (0,0,0) and (0,0,1), you can place a block at (1,0,1), even though there's no block at (1,0,0), because the (1,0,1) block is supported by the (0,0,1) block.
 - Block placements will *fail* if they do not adhere to gravity or another block is already in that location.
 - The z-axis is the vertical axis. z is the last number in the three-tuple positions. If z=0, then it's ground level (and will adhere to gravity), otherwise, you need a supporting block. For example, (1,1,0) is x=1, y=1, z=0, and is placeable without any other blocks. (0,1,2) is x=0, y=1, z=2, and is not placeable without supporting blocks.

@@ -38,6 +38,8 @@ Examples:
     parser.add_argument('--output-dir', default='comparison_results', help='Output directory')
     parser.add_argument('--create-test-structures', action='store_true',
                        help='Create test structures and exit')
+    parser.add_argument('--perfect-information', action='store_true',
+                       help='Give agents full goal information instead of just their own goals')
 
     args = parser.parse_args()
 
@@ -111,7 +113,8 @@ Examples:
         structures=structures,
         trials_per_pairing=args.trials,
         max_turns=args.max_turns,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        perfect_information=args.perfect_information
     )
 
     try:

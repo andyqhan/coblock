@@ -45,21 +45,21 @@ MODEL_CONFIGS = {
     #     "model": "claude-3-5-haiku-20241022",
     #     "provider": "anthropic"
     # },
-    "opus-4": {
-        "name": "opus-4",
-        "model": "claude-opus-4-20250514",
-        "provider": "anthropic"
-    }
-    # "gemini-2.5-flash": {
-    #     "name": "gemini-2.5-flash",
-    #     "model": "gemini-2.5-flash",
-    #     "provider": "google"
-    # },
-    # "gemini-2.5-flash-lite": {
-    #     "name": "gemini-2.5-flash-lite",
-    #     "model": "gemini-2.5-flash-lite-preview-06-17",
-    #     "provider": "google"
+    # "opus-4": {
+    #     "name": "opus-4",
+    #     "model": "claude-opus-4-20250514",
+    #     "provider": "anthropic"
     # }
+    "gemini-2.5-flash": {
+        "name": "gemini-2.5-flash",
+        "model": "gemini-2.5-flash",
+        "provider": "google"
+    },
+    "gemini-2.5-flash-lite": {
+        "name": "gemini-2.5-flash-lite",
+        "model": "gemini-2.5-flash-lite-preview-06-17",
+        "provider": "google"
+    }
 }
 
 
@@ -186,7 +186,8 @@ class ModelComparisonOrchestrator:
     """Orchestrates model comparisons across multiple structures and trials."""
     
     def __init__(self, structures: List[str], trials_per_pairing: int = 3, 
-                 max_turns: int = 100, output_dir: str = "comparison_results"):
+                 max_turns: int = 100, output_dir: str = "comparison_results",
+                 perfect_information: bool = False):
         """
         Initialize the orchestrator.
         
@@ -195,11 +196,13 @@ class ModelComparisonOrchestrator:
             trials_per_pairing: Number of trials to run for each model pairing
             max_turns: Maximum turns per game
             output_dir: Directory to save results
+            perfect_information: If True, agents get full goal information instead of just their own goals
         """
         self.structures = structures
         self.trials_per_pairing = trials_per_pairing
         self.max_turns = max_turns
         self.output_dir = Path(output_dir)
+        self.perfect_information = perfect_information
         self.output_dir.mkdir(exist_ok=True)
         
         # Set up logging
@@ -251,7 +254,8 @@ class ModelComparisonOrchestrator:
             coordinator = LLMCoordinator(
                 environment_xml=structure,
                 agent_configs=agent_configs,
-                visualize=False
+                visualize=False,
+                perfect_information=self.perfect_information
             )
             
             # Run the game
