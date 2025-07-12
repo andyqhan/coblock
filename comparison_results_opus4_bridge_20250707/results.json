@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "models": [
+      "opus-4"
+    ],
+    "structures": [
+      "structures/bridge.xml"
+    ],
+    "trials_per_pairing": 5,
+    "max_turns": 30,
+    "timestamp": "2025-07-07T14:31:12.703680"
+  },
+  "results": [
+    {
+      "pairing": [
+        "opus-4",
+        "opus-4"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 1,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 195.62652015686035,
+      "agent1_actions": 15,
+      "agent2_actions": 14,
+      "chat_messages_sent": 16,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (1, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (2, 0, 2): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "opus-4",
+        "opus-4"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 2,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 208.43549823760986,
+      "agent1_actions": 15,
+      "agent2_actions": 15,
+      "chat_messages_sent": 14,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 2): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "opus-4",
+        "opus-4"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 3,
+      "success": true,
+      "turns_taken": 28,
+      "total_actions": 28,
+      "failed_actions": 0,
+      "time_taken": 199.21848797798157,
+      "agent1_actions": 14,
+      "agent2_actions": 14,
+      "chat_messages_sent": 14,
+      "final_game_state": null
+    },
+    {
+      "pairing": [
+        "opus-4",
+        "opus-4"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 4,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 194.80001711845398,
+      "agent1_actions": 15,
+      "agent2_actions": 15,
+      "chat_messages_sent": 14,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (3, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 1): {'color': 'brown', 'owner': 'agent2'}, (1, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (2, 0, 2): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 2): {'color': 'brown', 'owner': 'agent1'}, (4, 0, 2): {'color': 'brown', 'owner': 'agent1'}}"
+    },
+    {
+      "pairing": [
+        "opus-4",
+        "opus-4"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 5,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 205.24320697784424,
+      "agent1_actions": 15,
+      "agent2_actions": 15,
+      "chat_messages_sent": 18,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (3, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 1): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 2): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'red', 'owner': 'agent1'}, (1, 0, 1): {'color': 'red', 'owner': 'agent1'}, (2, 0, 1): {'color': 'red', 'owner': 'agent1'}}"
+    }
+  ]
+}

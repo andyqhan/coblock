@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "models": [
+      "gemini-2.5-flash",
+      "gemini-2.5-flash-lite"
+    ],
+    "structures": [
+      "structures/bridge.xml"
+    ],
+    "trials_per_pairing": 5,
+    "max_turns": 30,
+    "timestamp": "2025-07-11T06:51:33.620897"
+  },
+  "results": [
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 1,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 27,
+      "failed_actions": 0,
+      "time_taken": 113.45997428894043,
+      "agent1_actions": 14,
+      "agent2_actions": 13,
+      "chat_messages_sent": 6,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'yellow', 'owner': 'agent2'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'yellow', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'yellow', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 1, 0): {'color': 'yellow', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'yellow', 'owner': 'agent2'}, (3, 1, 0): {'color': 'yellow', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'yellow', 'owner': 'agent2'}, (4, 1, 0): {'color': 'yellow', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 2,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 29,
+      "failed_actions": 0,
+      "time_taken": 110.21728086471558,
+      "agent1_actions": 15,
+      "agent2_actions": 14,
+      "chat_messages_sent": 4,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'red', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'red', 'owner': 'agent2'}, (2, 1, 0): {'color': 'red', 'owner': 'agent2'}, (3, 1, 0): {'color': 'red', 'owner': 'agent2'}, (4, 1, 0): {'color': 'red', 'owner': 'agent2'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 3,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 135.39916586875916,
+      "agent1_actions": 15,
+      "agent2_actions": 15,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'red', 'owner': 'agent2'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'red', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 1, 0): {'color': 'red', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'red', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 4,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 121.07587814331055,
+      "agent1_actions": 15,
+      "agent2_actions": 15,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'red', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 0, 0): {'color': 'red', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'red', 'owner': 'agent2'}, (2, 1, 0): {'color': 'red', 'owner': 'agent2'}, (3, 1, 0): {'color': 'red', 'owner': 'agent2'}, (4, 1, 0): {'color': 'red', 'owner': 'agent2'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 5,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 14,
+      "failed_actions": 0,
+      "time_taken": 55.85250425338745,
+      "agent1_actions": 7,
+      "agent2_actions": 7,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 1,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 15,
+      "failed_actions": 1,
+      "time_taken": 48.38582921028137,
+      "agent1_actions": 8,
+      "agent2_actions": 6,
+      "chat_messages_sent": 4,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 2,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 1,
+      "time_taken": 94.7402732372284,
+      "agent1_actions": 15,
+      "agent2_actions": 14,
+      "chat_messages_sent": 2,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (3, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (4, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 3,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 28,
+      "failed_actions": 1,
+      "time_taken": 100.1923930644989,
+      "agent1_actions": 14,
+      "agent2_actions": 13,
+      "chat_messages_sent": 40,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (3, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (4, 1, 0): {'color': 'gray', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 4,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 1,
+      "time_taken": 120.14375591278076,
+      "agent1_actions": 15,
+      "agent2_actions": 14,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 5,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 22,
+      "failed_actions": 2,
+      "time_taken": 76.99938321113586,
+      "agent1_actions": 11,
+      "agent2_actions": 9,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 1,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 27,
+      "failed_actions": 1,
+      "time_taken": 56.69648313522339,
+      "agent1_actions": 14,
+      "agent2_actions": 11,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 2,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 14,
+      "failed_actions": 1,
+      "time_taken": 27.702985286712646,
+      "agent1_actions": 7,
+      "agent2_actions": 6,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (5, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 3,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 16,
+      "failed_actions": 1,
+      "time_taken": 30.654203176498413,
+      "agent1_actions": 8,
+      "agent2_actions": 7,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 4,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 0,
+      "time_taken": 62.80307102203369,
+      "agent1_actions": 15,
+      "agent2_actions": 14,
+      "chat_messages_sent": 4,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 1, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    },
+    {
+      "pairing": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash-lite"
+      ],
+      "structure": "bridge.xml",
+      "trial_num": 5,
+      "success": false,
+      "turns_taken": 30,
+      "total_actions": 30,
+      "failed_actions": 4,
+      "time_taken": 60.962013959884644,
+      "agent1_actions": 15,
+      "agent2_actions": 11,
+      "chat_messages_sent": 0,
+      "final_game_state": "{(0, 0, 0): {'color': 'gray', 'owner': 'agent1'}, (0, 1, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (0, 2, 0): {'color': 'gray', 'owner': 'agent1'}, (1, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (2, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (2, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (3, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (3, 2, 0): {'color': 'brown', 'owner': 'agent2'}, (4, 0, 0): {'color': 'gray', 'owner': 'agent2'}, (4, 2, 0): {'color': 'brown', 'owner': 'agent2'}}"
+    }
+  ]
+}

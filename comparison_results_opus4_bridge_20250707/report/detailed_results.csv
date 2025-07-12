@@ -1,0 +1,6 @@
+model1,model2,structure,trial,success,turns,total_actions,failed_actions,success_rate,time_seconds,agent1_actions,agent2_actions,chat_messages
+opus-4,opus-4,bridge.xml,1,False,30,30,0,1.0,195.62652015686035,15,14,16
+opus-4,opus-4,bridge.xml,2,False,30,30,0,1.0,208.43549823760986,15,15,14
+opus-4,opus-4,bridge.xml,3,True,28,28,0,1.0,199.21848797798157,14,14,14
+opus-4,opus-4,bridge.xml,4,False,30,30,0,1.0,194.80001711845398,15,15,14
+opus-4,opus-4,bridge.xml,5,False,30,30,0,1.0,205.24320697784424,15,15,18

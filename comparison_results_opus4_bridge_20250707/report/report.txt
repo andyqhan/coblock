@@ -1,0 +1,34 @@
+================================================================================
+MODEL COMPARISON REPORT
+================================================================================
+Generated: 2025-07-07 14:31:14
+Total trials: 5
+Models compared: opus-4
+Structures tested: 1
+Trials per pairing: 5
+
+OVERALL SUMMARY
+----------------------------------------
+Best performing pairing: opus-4 + opus-4
+  - Success rate: 20.0%
+  - Avg turns: 28.0
+
+DETAILED PAIRING RESULTS
+----------------------------------------
+
+opus-4 + opus-4:
+  Success rate: 20.0%
+  Successful trials: 1/5
+  Avg turns to completion: 28.0
+  Avg total actions: 29.6
+  Avg failed actions: 0.0
+  Action success rate: 100.0%
+
+
+RESULTS BY STRUCTURE
+----------------------------------------
+
+bridge.xml:
+  opus-4 + opus-4:
+    Success rate: 20.0%
+    Avg turns: 28.0

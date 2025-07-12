@@ -1,0 +1,65 @@
+================================================================================
+MODEL COMPARISON REPORT
+================================================================================
+Generated: 2025-06-19 13:01:18
+Total trials: 12
+Models compared: sonnet-4, haiku-3.5
+Structures tested: 2
+Trials per pairing: 2
+
+OVERALL SUMMARY
+----------------------------------------
+Best performing pairing: haiku-3.5 + haiku-3.5
+  - Success rate: 100.0%
+  - Avg turns: 17.5
+
+DETAILED PAIRING RESULTS
+----------------------------------------
+
+haiku-3.5 + haiku-3.5:
+  Success rate: 100.0%
+  Successful trials: 4/4
+  Avg turns to completion: 17.5
+  Avg total actions: 17.5
+  Avg failed actions: 2.0
+  Action success rate: 88.7%
+
+sonnet-4 + haiku-3.5:
+  Success rate: 25.0%
+  Successful trials: 1/4
+  Avg turns to completion: 24.0
+  Avg total actions: 28.5
+  Avg failed actions: 1.8
+  Action success rate: 93.8%
+
+sonnet-4 + sonnet-4:
+  Success rate: 50.0%
+  Successful trials: 2/4
+  Avg turns to completion: 18.0
+  Avg total actions: 24.0
+  Avg failed actions: 0.0
+  Action success rate: 100.0%
+
+
+RESULTS BY STRUCTURE
+----------------------------------------
+
+bridge.xml:
+  haiku-3.5 + haiku-3.5:
+    Success rate: 100.0%
+    Avg turns: 13.5
+  sonnet-4 + haiku-3.5:
+    Success rate: 50.0%
+    Avg turns: 24.0
+  sonnet-4 + sonnet-4:
+    Success rate: 100.0%
+    Avg turns: 18.0
+
+house.xml:
+  haiku-3.5 + haiku-3.5:
+    Success rate: 100.0%
+    Avg turns: 21.5
+  sonnet-4 + haiku-3.5:
+    Success rate: 0.0%
+  sonnet-4 + sonnet-4:
+    Success rate: 0.0%

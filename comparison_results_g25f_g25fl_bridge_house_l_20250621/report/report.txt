@@ -1,0 +1,73 @@
+================================================================================
+MODEL COMPARISON REPORT
+================================================================================
+Generated: 2025-06-21 14:20:04
+Total trials: 36
+Models compared: gemini-2.5-flash, gemini-2.5-flash-lite
+Structures tested: 3
+Trials per pairing: 4
+
+OVERALL SUMMARY
+----------------------------------------
+Best performing pairing: gemini-2.5-flash + gemini-2.5-flash-lite
+  - Success rate: 33.3%
+  - Avg turns: 4.0
+
+DETAILED PAIRING RESULTS
+----------------------------------------
+
+gemini-2.5-flash + gemini-2.5-flash:
+  Success rate: 50.0%
+  Successful trials: 6/12
+  Avg turns to completion: 8.0
+  Avg total actions: 5.9
+  Avg failed actions: 0.0
+  Action success rate: 58.3%
+
+gemini-2.5-flash + gemini-2.5-flash-lite:
+  Success rate: 33.3%
+  Successful trials: 4/12
+  Avg turns to completion: 4.0
+  Avg total actions: 16.6
+  Avg failed actions: 0.6
+  Action success rate: 89.3%
+
+gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+  Success rate: 33.3%
+  Successful trials: 4/12
+  Avg turns to completion: 4.0
+  Avg total actions: 20.1
+  Avg failed actions: 1.3
+  Action success rate: 95.4%
+
+
+RESULTS BY STRUCTURE
+----------------------------------------
+
+simple_l.xml:
+  gemini-2.5-flash + gemini-2.5-flash:
+    Success rate: 100.0%
+    Avg turns: 4.0
+  gemini-2.5-flash + gemini-2.5-flash-lite:
+    Success rate: 100.0%
+    Avg turns: 4.0
+  gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+    Success rate: 100.0%
+    Avg turns: 4.0
+
+bridge.xml:
+  gemini-2.5-flash + gemini-2.5-flash:
+    Success rate: 50.0%
+    Avg turns: 16.0
+  gemini-2.5-flash + gemini-2.5-flash-lite:
+    Success rate: 0.0%
+  gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+    Success rate: 0.0%
+
+house.xml:
+  gemini-2.5-flash + gemini-2.5-flash:
+    Success rate: 0.0%
+  gemini-2.5-flash + gemini-2.5-flash-lite:
+    Success rate: 0.0%
+  gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+    Success rate: 0.0%

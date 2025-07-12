@@ -1,0 +1,54 @@
+================================================================================
+MODEL COMPARISON REPORT
+================================================================================
+Generated: 2025-06-22 08:43:13
+Total trials: 30
+Models compared: gemini-2.5-flash, gemini-2.5-flash-lite
+Structures tested: 1
+Trials per pairing: 10
+
+OVERALL SUMMARY
+----------------------------------------
+Best performing pairing: gemini-2.5-flash + gemini-2.5-flash-lite
+  - Success rate: 20.0%
+  - Avg turns: 14.0
+
+DETAILED PAIRING RESULTS
+----------------------------------------
+
+gemini-2.5-flash + gemini-2.5-flash:
+  Success rate: 10.0%
+  Successful trials: 1/10
+  Avg turns to completion: 18.0
+  Avg total actions: 25.6
+  Avg failed actions: 0.7
+  Action success rate: 97.7%
+
+gemini-2.5-flash + gemini-2.5-flash-lite:
+  Success rate: 20.0%
+  Successful trials: 2/10
+  Avg turns to completion: 14.0
+  Avg total actions: 22.5
+  Avg failed actions: 0.9
+  Action success rate: 95.6%
+
+gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+  Success rate: 0.0%
+  Successful trials: 0/10
+  Avg total actions: 24.8
+  Avg failed actions: 1.2
+  Action success rate: 95.0%
+
+
+RESULTS BY STRUCTURE
+----------------------------------------
+
+bridge.xml:
+  gemini-2.5-flash + gemini-2.5-flash:
+    Success rate: 10.0%
+    Avg turns: 18.0
+  gemini-2.5-flash + gemini-2.5-flash-lite:
+    Success rate: 20.0%
+    Avg turns: 14.0
+  gemini-2.5-flash-lite + gemini-2.5-flash-lite:
+    Success rate: 0.0%

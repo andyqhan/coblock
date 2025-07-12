@@ -1,0 +1,13 @@
+model1,model2,structure,trial,success,turns,total_actions,failed_actions,success_rate,time_seconds,agent1_actions,agent2_actions,chat_messages
+sonnet-4,sonnet-4,bridge.xml,1,True,16,16,0,1.0,115.91783428192139,8,8,0
+sonnet-4,sonnet-4,bridge.xml,2,True,20,20,0,1.0,151.83946704864502,10,10,18
+sonnet-4,haiku-3.5,bridge.xml,1,True,24,24,2,0.9166666666666666,179.23749494552612,12,10,38
+sonnet-4,haiku-3.5,bridge.xml,2,False,30,30,1,0.9666666666666667,326.9945237636566,15,14,12
+haiku-3.5,haiku-3.5,bridge.xml,1,True,14,14,1,0.9285714285714286,59.23389410972595,7,6,28
+haiku-3.5,haiku-3.5,bridge.xml,2,True,13,13,1,0.9230769230769231,57.4516396522522,7,5,24
+sonnet-4,sonnet-4,house.xml,1,False,30,30,0,1.0,350.1755290031433,15,15,14
+sonnet-4,sonnet-4,house.xml,2,False,30,30,0,1.0,443.5287091732025,15,15,20
+sonnet-4,haiku-3.5,house.xml,1,False,30,30,2,0.9333333333333333,220.1995997428894,15,13,28
+sonnet-4,haiku-3.5,house.xml,2,False,30,30,2,0.9333333333333333,197.71842193603516,15,13,44
+haiku-3.5,haiku-3.5,house.xml,1,True,18,18,4,0.7777777777777778,93.13721776008606,8,6,36
+haiku-3.5,haiku-3.5,house.xml,2,True,25,25,2,0.92,119.61461806297302,12,11,46

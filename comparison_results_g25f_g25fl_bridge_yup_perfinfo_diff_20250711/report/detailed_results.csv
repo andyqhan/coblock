@@ -1,0 +1,16 @@
+model1,model2,structure,trial,success,turns,total_actions,failed_actions,success_rate,time_seconds,agent1_actions,agent2_actions,chat_messages
+gemini-2.5-flash,gemini-2.5-flash,bridge.xml,1,True,12,12,0,1.0,46.46979093551636,6,6,2
+gemini-2.5-flash,gemini-2.5-flash,bridge.xml,2,True,12,12,0,1.0,44.15980792045593,6,6,4
+gemini-2.5-flash,gemini-2.5-flash,bridge.xml,3,True,12,12,0,1.0,51.27514886856079,6,6,4
+gemini-2.5-flash,gemini-2.5-flash,bridge.xml,4,True,12,12,0,1.0,50.5253849029541,6,6,2
+gemini-2.5-flash,gemini-2.5-flash,bridge.xml,5,True,12,12,0,1.0,43.35238027572632,6,6,2
+gemini-2.5-flash,gemini-2.5-flash-lite,bridge.xml,1,True,12,12,1,0.9166666666666666,33.31952881813049,6,5,2
+gemini-2.5-flash,gemini-2.5-flash-lite,bridge.xml,2,True,12,12,0,1.0,38.23572611808777,6,6,0
+gemini-2.5-flash,gemini-2.5-flash-lite,bridge.xml,3,True,14,14,1,0.9285714285714286,41.21133494377136,7,6,0
+gemini-2.5-flash,gemini-2.5-flash-lite,bridge.xml,4,True,16,16,2,0.875,41.616886615753174,8,6,2
+gemini-2.5-flash,gemini-2.5-flash-lite,bridge.xml,5,True,18,18,2,0.8888888888888888,65.08655405044556,8,8,0
+gemini-2.5-flash-lite,gemini-2.5-flash-lite,bridge.xml,1,True,16,16,1,0.9375,34.52183389663696,8,7,0
+gemini-2.5-flash-lite,gemini-2.5-flash-lite,bridge.xml,2,False,30,30,1,0.9666666666666667,61.36962032318115,15,14,0
+gemini-2.5-flash-lite,gemini-2.5-flash-lite,bridge.xml,3,True,12,12,1,0.9166666666666666,24.41404914855957,6,5,0
+gemini-2.5-flash-lite,gemini-2.5-flash-lite,bridge.xml,4,True,12,12,1,0.9166666666666666,23.38894486427307,6,5,2
+gemini-2.5-flash-lite,gemini-2.5-flash-lite,bridge.xml,5,True,12,12,1,0.9166666666666666,22.45752501487732,6,5,0
