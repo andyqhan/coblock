@@ -187,7 +187,7 @@ class ModelComparisonOrchestrator:
     
     def __init__(self, structures: List[str], trials_per_pairing: int = 3, 
                  max_turns: int = 100, output_dir: str = "comparison_results",
-                 perfect_information: bool = False):
+                 perfect_information: bool = False, show_diff: bool = False):
         """
         Initialize the orchestrator.
         
@@ -197,12 +197,14 @@ class ModelComparisonOrchestrator:
             max_turns: Maximum turns per game
             output_dir: Directory to save results
             perfect_information: If True, agents get full goal information instead of just their own goals
+            show_diff: If True, show difference between current and target structure in turn prompts
         """
         self.structures = structures
         self.trials_per_pairing = trials_per_pairing
         self.max_turns = max_turns
         self.output_dir = Path(output_dir)
         self.perfect_information = perfect_information
+        self.show_diff = show_diff
         self.output_dir.mkdir(exist_ok=True)
         
         # Set up logging
@@ -255,7 +257,8 @@ class ModelComparisonOrchestrator:
                 environment_xml=structure,
                 agent_configs=agent_configs,
                 visualize=False,
-                perfect_information=self.perfect_information
+                perfect_information=self.perfect_information,
+                show_diff=self.show_diff
             )
             
             # Run the game

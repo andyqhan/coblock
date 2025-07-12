@@ -1,18 +1,18 @@
 <Structure>
     <Goal>
         <Block color="gray" pos="(0, 0, 0)"/>
-        <Block color="gray" pos="(0, 0, 1)"/>
-        <Block color="gray" pos="(0, 0, 2)"/>
+        <Block color="gray" pos="(0, 1, 0)"/>
+        <Block color="gray" pos="(0, 2, 0)"/>
     </Goal>
     <Goal>
-        <Block color="brown" pos="(1, 0, 2)"/>
-        <Block color="brown" pos="(2, 0, 2)"/>
-        <Block color="brown" pos="(3, 0, 2)"/>
-        <Block color="brown" pos="(4, 0, 2)"/>
+        <Block color="brown" pos="(1, 2, 0)"/>
+        <Block color="brown" pos="(2, 2, 0)"/>
+        <Block color="brown" pos="(3, 2, 0)"/>
+        <Block color="brown" pos="(4, 2, 0)"/>
     </Goal>
     <Goal>
         <Block color="gray" pos="(5, 0, 0)"/>
-        <Block color="gray" pos="(5, 0, 1)"/>
-        <Block color="gray" pos="(5, 0, 2)"/>
+        <Block color="gray" pos="(5, 1, 0)"/>
+        <Block color="gray" pos="(5, 2, 0)"/>
     </Goal>
 </Structure>

@@ -470,6 +470,56 @@ class CoblockEnvironment:
 
         return True
 
+    def get_missing_blocks(self) -> Dict[Tuple[int, int, int], str]:
+        """Get blocks that should be placed but aren't."""
+        goal_state = self.get_goal_state()
+        current_state = self.get_current_state()
+        
+        missing = {}
+        for pos, color in goal_state.items():
+            if pos not in current_state:
+                missing[pos] = color
+            elif current_state[pos]['color'] != color:
+                missing[pos] = color
+        return missing
+
+    def get_extra_blocks(self) -> Dict[Tuple[int, int, int], Dict[str, str]]:
+        """Get blocks that are placed but shouldn't be."""
+        goal_state = self.get_goal_state()
+        current_state = self.get_current_state()
+        
+        extra = {}
+        for pos, block_info in current_state.items():
+            if pos not in goal_state:
+                extra[pos] = block_info
+            elif goal_state[pos] != block_info['color']:
+                extra[pos] = block_info
+        return extra
+
+    def get_agent_missing_blocks(self, agent_name: str, agent_goals: Dict[Tuple[int, int, int], str]) -> Dict[Tuple[int, int, int], str]:
+        """Get blocks that an agent should place but hasn't (from their goals only)."""
+        current_state = self.get_current_state()
+        
+        missing = {}
+        for pos, color in agent_goals.items():
+            if pos not in current_state:
+                missing[pos] = color
+            elif current_state[pos]['color'] != color:
+                missing[pos] = color
+        print(f"in get_agent_missing_blocks, got agent_goals {agent_goals}, current_state {current_state}. Missing blocks: {missing}")
+        return missing
+
+    def get_agent_extra_blocks(self, agent_name: str, agent_goals: Dict[Tuple[int, int, int], str]) -> Dict[Tuple[int, int, int], Dict[str, str]]:
+        """Get blocks that an agent has placed but shouldn't have (based on their goals only)."""
+        current_state = self.get_current_state()
+        
+        extra = {}
+        for pos, block_info in current_state.items():
+            if block_info['owner'] == agent_name and pos not in agent_goals:
+                extra[pos] = block_info
+        print(f"in get_agent_extra_blocks, got agent_goals {agent_goals}, current_state {current_state}. Extra blocks: {extra}")
+        return extra
+
     def close(self):
         """Close the environment and any associated resources."""
         if self.visualizer:

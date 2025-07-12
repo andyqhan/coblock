@@ -40,6 +40,8 @@ Examples:
                        help='Create test structures and exit')
     parser.add_argument('--perfect-information', action='store_true',
                        help='Give agents full goal information instead of just their own goals')
+    parser.add_argument('--show-diff', action='store_true',
+                       help='Show difference between current structure and target structure in turn prompts')
 
     args = parser.parse_args()
 
@@ -98,6 +100,8 @@ Examples:
     print(f"  - Max turns per game: {args.max_turns}")
     print(f"  - Total runs: {total_runs}")
     print(f"  - Output directory: {args.output_dir}")
+    print(f"  - Perfect information: {args.perfect_information}")
+    print(f"  - Show diff: {args.show_diff}")
 
     # Confirm for interactive runs
     if sys.stdin.isatty():  # Only prompt if running interactively
@@ -114,7 +118,8 @@ Examples:
         trials_per_pairing=args.trials,
         max_turns=args.max_turns,
         output_dir=args.output_dir,
-        perfect_information=args.perfect_information
+        perfect_information=args.perfect_information,
+        show_diff=args.show_diff
     )
 
     try:

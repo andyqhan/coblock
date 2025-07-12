@@ -1,4 +1,5 @@
 import os
+import ast
 import re
 import json
 import logging
@@ -290,7 +291,7 @@ class LLMCoordinator:
     
     def __init__(self, environment_xml: str, agent_configs: List[Dict[str, str]], 
                  visualize: bool = False, mock_responses: Optional[Dict[str, List[str]]] = None,
-                 perfect_information: bool = False):
+                 perfect_information: bool = False, show_diff: bool = False):
         """
         Initialize the coordinator.
         
@@ -300,6 +301,7 @@ class LLMCoordinator:
             visualize: Whether to enable 3D visualization
             mock_responses: Optional mock responses for testing
             perfect_information: If True, agents get full goal information instead of just their own goals
+            show_diff: If True, show difference between current and target structure in turn prompts
         """
         # Initialize environment
         self.env = CoblockEnvironment(environment_xml, visualize=visualize)
@@ -307,6 +309,7 @@ class LLMCoordinator:
         # Parse goals from XML
         self.goals = self._parse_goals(environment_xml)
         self.perfect_information = perfect_information
+        self.show_diff = show_diff
         
         # Initialize agents
         self.agents: Dict[str, Agent] = {}
@@ -475,7 +478,36 @@ At each turn, you will receive information about your inventory in this format:
 - You must always send an action command (`place_block`, `remove_block`, or `wait`) on every turn. You may optionally send a `send_chat` command, which is the *only* way to communicate with your partner.
 - Your partner does not know what your goal is, nor do they know what blocks you have. You do not know what your partner's goal is. You have different goals than your partner."""
         
-        additional_instructions = goal_instructions + """
+        diff_instructions = ""
+        if self.show_diff:
+            if self.perfect_information:
+                diff_instructions = """
+- You will also be provided a comparison between the goal structure and current structure in the world. This comparison helps you to accurately track the progress and decide the next block to build.
+<ComparisonResult>
+<MissingBlocks>
+# any missing blocks from the full structure
+</MissingBlocks>
+<ExtraBlocks>
+# any extra blocks placed that shouldn't be there
+</ExtraBlocks>
+</ComparisonResult>
+The blocks in MissingBlocks should be built. The blocks in ExtraBlocks should be removed.
+"""
+            else:
+                diff_instructions = """
+- You will also be provided a comparison between your goal structure and the blocks you have placed. This comparison helps you to accurately track the progress and decide the next block to build.
+<ComparisonResult>
+<MissingBlocks>
+# any missing blocks from your individual goals
+</MissingBlocks>
+<ExtraBlocks>
+# any extra blocks you've placed that shouldn't be there
+</ExtraBlocks>
+</ComparisonResult>
+The blocks in MissingBlocks should be built. The blocks in ExtraBlocks should be removed.
+"""
+
+        additional_instructions = goal_instructions + diff_instructions + """
 - Block placements *must* adhere to gravity: every block you place has to be connected either to the ground (y=0) or another block (which is eventually connected to the ground). *Blocks do not have to be directly supported*: they can be supported by an adjacent block. For example, if there are blocks at (0,0,0) and (0,1,0), you can place a block at (1,1,0), even though there's no block at (1,0,0), because the (1,1,0) block is supported by the (0,1,0) block.
 - Block placements will *fail* if they do not adhere to gravity or another block is already in that location.
 - The y-axis is the vertical axis. y is the second number in the three-tuple positions. If y=0, then it's ground level (and will adhere to gravity), otherwise, you need a supporting block. For example, (1,0,1) is x=1, y=0, z=1, and is placeable without any other blocks. (0,2,1) is x=0, y=2, z=1, and is not placeable without supporting blocks.
@@ -499,6 +531,45 @@ At each turn, you will receive information about your inventory in this format:
             owner = info['owner']
             lines.append(f'    <Block color="{color}" pos="{pos}" owner="{owner}"/>')
         lines.append("</World>")
+        return "\n".join(lines)
+    
+    def _get_diff_xml(self, agent: Agent) -> str:
+        """Get the diff between current state and goals in XML format."""
+        lines = ["<ComparisonResult>"]
+        
+        if self.perfect_information:
+            # Show diff for the complete structure
+            missing_blocks = self.env.get_missing_blocks()
+            extra_blocks = self.env.get_extra_blocks()
+        else:
+            # Show diff only for this agent's goals
+
+            agent_goals = {}
+            for goal in agent.goals:
+                for block in goal.findall('Block'):
+                    color = block.get('color')
+                    pos = ast.literal_eval(block.get('pos', ''))
+                    agent_goals[pos] = color
+            missing_blocks = self.env.get_agent_missing_blocks(agent.name, agent_goals)
+            extra_blocks = self.env.get_agent_extra_blocks(agent.name, agent_goals)
+        
+        # Add missing blocks
+        lines.append("<MissingBlocks>")
+        if missing_blocks:
+            for pos, color in sorted(missing_blocks.items()):
+                lines.append(f'    <Block color="{color}" pos="{pos}"/>')
+        lines.append("</MissingBlocks>")
+        
+        # Add extra blocks
+        lines.append("<ExtraBlocks>")
+        if extra_blocks:
+            for pos, info in sorted(extra_blocks.items()):
+                color = info['color']
+                owner = info['owner']
+                lines.append(f'    <Block color="{color}" pos="{pos}" owner="{owner}"/>')
+        lines.append("</ExtraBlocks>")
+        
+        lines.append("</ComparisonResult>")
         return "\n".join(lines)
     
     def _get_recent_actions_text(self, agent_name: str) -> str:
@@ -541,6 +612,11 @@ At each turn, you will receive information about your inventory in this format:
         parts.append(agent.get_inventory_xml())
         parts.append("\nCurrent world state:")
         parts.append(self._get_world_state_xml())
+        
+        # Add diff information if enabled
+        if self.show_diff:
+            parts.append("\nComparison result:")
+            parts.append(self._get_diff_xml(agent))
         
         # Add any pending messages
         if agent.name in self.pending_messages and self.pending_messages[agent.name]:
